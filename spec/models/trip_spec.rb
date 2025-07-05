@@ -87,7 +87,7 @@ RSpec.describe Trip, type: :model do
       it 'returns trips for specified user' do
         user2 = create(:user)
         other_trip = create(:trip, user: user2)
-        
+
         expect(Trip.by_user(user)).to match_array([planning_trip, active_trip, completed_trip, public_trip, private_trip])
         expect(Trip.by_user(user2)).to eq([other_trip])
       end
@@ -98,7 +98,7 @@ RSpec.describe Trip, type: :model do
         old_trip = create(:trip, user: user)
         sleep(0.01) # Ensure different timestamps
         new_trip = create(:trip, user: user)
-        
+
         expect(Trip.recent.first).to eq(new_trip)
       end
     end
@@ -147,10 +147,10 @@ RSpec.describe Trip, type: :model do
       it 'returns correct CSS class for each status' do
         trip.status = 'planning'
         expect(trip.status_badge_class).to eq('bg-primary')
-        
+
         trip.status = 'active'
         expect(trip.status_badge_class).to eq('bg-success')
-        
+
         trip.status = 'completed'
         expect(trip.status_badge_class).to eq('bg-secondary')
       end
@@ -165,7 +165,7 @@ RSpec.describe Trip, type: :model do
       it 'returns false for non-active trips' do
         trip.status = 'planning'
         expect(trip.is_current?).to be false
-        
+
         trip.status = 'completed'
         expect(trip.is_current?).to be false
       end
@@ -175,7 +175,7 @@ RSpec.describe Trip, type: :model do
       it 'merges new data with existing trip_data' do
         trip.trip_data = { 'existing' => 'value' }
         trip.add_trip_data('new_key', 'new_value')
-        
+
         expect(trip.trip_data).to eq({
           'existing' => 'value',
           'new_key' => 'new_value'
@@ -185,14 +185,14 @@ RSpec.describe Trip, type: :model do
       it 'initializes trip_data if nil' do
         trip.trip_data = nil
         trip.add_trip_data('key', 'value')
-        
+
         expect(trip.trip_data).to eq({ 'key' => 'value' })
       end
 
       it 'overwrites existing keys' do
         trip.trip_data = { 'key' => 'old_value' }
         trip.add_trip_data('key', 'new_value')
-        
+
         expect(trip.trip_data['key']).to eq('new_value')
       end
     end

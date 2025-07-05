@@ -17,7 +17,7 @@ class TripsController < ApplicationController
 
   def create
     @trip = current_user.trips.build(trip_params)
-    
+
     if @trip.save
       redirect_to @trip, notice: t('messages.trip_created')
     else
@@ -44,9 +44,9 @@ class TripsController < ApplicationController
 
   def update_status
     if @trip.update(status: params[:status])
-      redirect_to @trip, notice: "Trip status updated successfully"
+      redirect_to @trip, notice: 'Trip status updated successfully'
     else
-      redirect_to @trip, alert: "Failed to update trip status"
+      redirect_to @trip, alert: 'Failed to update trip status'
     end
   end
 
@@ -57,7 +57,7 @@ class TripsController < ApplicationController
   end
 
   def ensure_owner
-    redirect_to trips_path, alert: "Access denied" unless @trip.user == current_user
+    redirect_to trips_path, alert: 'Access denied' unless @trip.user == current_user
   end
 
   def trip_params

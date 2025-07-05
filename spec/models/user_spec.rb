@@ -53,7 +53,7 @@ RSpec.describe User, type: :model do
     it 'destroys associated trips when user is destroyed' do
       user = create(:user)
       trip = create(:trip, user: user)
-      
+
       expect { user.destroy }.to change(Trip, :count).by(-1)
     end
   end

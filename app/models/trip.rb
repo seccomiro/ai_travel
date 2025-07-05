@@ -1,9 +1,9 @@
 class Trip < ApplicationRecord
   belongs_to :user
-  
+
   # Callbacks
   after_initialize :set_defaults
-  
+
   # Validations
   validates :title, presence: true, length: { maximum: 255 }
   validates :status, inclusion: { in: %w[planning active completed cancelled] }
@@ -114,7 +114,7 @@ class Trip < ApplicationRecord
 
   def end_date_after_start_date
     return unless both_dates_present?
-    
+
     if end_date < start_date
       errors.add(:end_date, 'must be after start date')
     end
