@@ -40,6 +40,60 @@ en:
     sign_up: "Sign up"
   
   # Trip planning
+    
+  # Chat interface
+  chat:
+    placeholder: "Tell me about your trip..."
+    send: "Send"
+    ai_thinking: "Thinking..."
+    
+  # Authentication
+  auth:
+    sign_in: "Sign in"
+    sign_up: "Sign up"
+    sign_out: "Sign out"
+    email: "Email"
+    password: "Password"
+    password_confirmation: "Confirm password"
+    remember_me: "Remember me"
+    forgot_password: "Forgot your password?"
+    first_name: "First name"
+    last_name: "Last name"
+    
+  # Common actions
+  actions:
+    save: "Save"
+    cancel: "Cancel"
+    edit: "Edit"
+    delete: "Delete"
+    back: "Back"
+    next: "Next"
+    previous: "Previous"
+    view: "View"
+    show: "Show"
+    
+  # Home page
+  home:
+    good_morning: "Good morning"
+    good_afternoon: "Good afternoon"
+    good_evening: "Good evening"
+    good_night: "Good night"
+    welcome_guest: "Welcome, Guest!"
+    features:
+      ai_planning:
+        title: "AI-Powered Planning"
+        description: "Let our AI assistant help you plan the perfect trip with personalized recommendations."
+      interactive_maps:
+        title: "Interactive Maps"
+        description: "Visualize your journey with interactive maps and real-time route planning."
+      collaboration:
+        title: "Collaborate & Share"
+        description: "Plan trips with friends and family, share itineraries, and collaborate in real-time."
+      export:
+        title: "Export & Offline"
+        description: "Download your travel guides as PDFs for offline access during your trip."
+  
+  # Trip helpers
   trips:
     new: "New trip"
     edit: "Edit trip"
@@ -83,42 +137,14 @@ en:
     days: "Days"
     segments: "Segments"
     activities: "Activities"
+    dates_not_set: "Dates not set"
+    from: "From"
+    until: "Until"
     status:
       planning: "Planning"
       active: "Active"
       completed: "Completed"
-    
-  # Chat interface
-  chat:
-    placeholder: "Tell me about your trip..."
-    send: "Send"
-    ai_thinking: "Thinking..."
-    
-  # Authentication
-  auth:
-    sign_in: "Sign in"
-    sign_up: "Sign up"
-    sign_out: "Sign out"
-    email: "Email"
-    password: "Password"
-    password_confirmation: "Confirm password"
-    remember_me: "Remember me"
-    forgot_password: "Forgot your password?"
-    first_name: "First name"
-    last_name: "Last name"
-    
-  # Common actions
-  actions:
-    save: "Save"
-    cancel: "Cancel"
-    edit: "Edit"
-    delete: "Delete"
-    back: "Back"
-    next: "Next"
-    previous: "Previous"
-    view: "View"
-    show: "Show"
-    
+  
   # Messages
   messages:
     welcome: "Welcome to AI Travel!"
