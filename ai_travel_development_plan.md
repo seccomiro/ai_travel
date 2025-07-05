@@ -237,7 +237,7 @@ The AI must understand and process all travel parameters from the vision documen
 - ⚠️ User authentication with OAuth providers (Devise done, OAuth setup pending)
 - ✅ Basic UI framework with internationalization
 - ✅ Initial database schema and models
-- ✅ Development environment setup (Docker, CI/CD)
+- ✅ Development environment setup (Docker, CI/CD) - Docker environment now available
 
 **Success Criteria**:
 - ✅ Users can register and login

@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+# Helper script for Docker development environment
+
+set -e
+
+case "$1" in
+  "setup")
+    echo "🚀 Setting up Docker development environment..."
+    
+    # Stop any running local PostgreSQL to avoid port conflicts
+    echo "📊 Checking for local PostgreSQL conflicts..."
+    if lsof -i :5432 >/dev/null 2>&1; then
+      echo "⚠️  Port 5432 is in use. You may need to stop local PostgreSQL:"
+      echo "   brew services stop postgresql"
+      echo "   or adjust the port in docker-compose.yml"
+    fi
+    
+    # Build and start containers
+    docker compose build
+    docker compose up -d postgres postgres_test redis
+    
+    # Wait for PostgreSQL to be ready
+    echo "⏳ Waiting for PostgreSQL to be ready..."
+    sleep 10
+    
+    # Setup database
+    docker compose run --rm web bin/rails db:create db:migrate
+    docker compose run --rm -e RAILS_ENV=test web bin/rails db:create db:migrate
+    
+    echo "✅ Docker development environment is ready!"
+    echo "   Run: bin/docker-dev start"
+    ;;
+    
+  "start")
+    echo "🚀 Starting Docker development environment..."
+    docker compose up
+    ;;
+    
+  "stop")
+    echo "🛑 Stopping Docker development environment..."
+    docker compose down
+    ;;
+    
+  "restart")
+    echo "🔄 Restarting Docker development environment..."
+    docker compose down
+    docker compose up
+    ;;
+    
+  "reset")
+    echo "🗑️  Resetting Docker development environment..."
+    docker compose down -v
+    docker compose build --no-cache
+    $0 setup
+    ;;
+    
+  "logs")
+    docker compose logs -f "${2:-web}"
+    ;;
+    
+  "shell")
+    docker compose exec web bash
+    ;;
+    
+  "rails")
+    shift
+    docker compose exec web bin/rails "$@"
+    ;;
+    
+  "test")
+    echo "🧪 Running tests in Docker..."
+    docker compose exec web bundle exec rspec
+    ;;
+    
+  "local")
+    echo "🏠 Switching back to local development..."
+    docker compose down
+    echo "✅ Docker stopped. You can now use: bin/dev"
+    ;;
+    
+  *)
+    echo "🐳 AI Travel Docker Development Helper"
+    echo ""
+    echo "Usage: bin/docker-dev <command>"
+    echo ""
+    echo "Commands:"
+    echo "  setup    - Initial setup of Docker environment"
+    echo "  start    - Start all services (web, postgres, redis, sidekiq)"
+    echo "  stop     - Stop all services"
+    echo "  restart  - Restart all services"
+    echo "  reset    - Reset environment (removes volumes and rebuilds)"
+    echo "  logs     - Show logs (optionally specify service: logs web)"
+    echo "  shell    - Open bash shell in web container"
+    echo "  rails    - Run rails commands (e.g., docker-dev rails console)"
+    echo "  test     - Run test suite"
+    echo "  local    - Stop Docker and switch back to local development"
+    echo ""
+    echo "Examples:"
+    echo "  bin/docker-dev setup     # First time setup"
+    echo "  bin/docker-dev start     # Start development"
+    echo "  bin/docker-dev rails c   # Rails console"
+    echo "  bin/docker-dev test      # Run tests"
+    echo "  bin/docker-dev local     # Back to local dev"
+    ;;
+esac 
