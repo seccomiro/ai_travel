@@ -1,0 +1,88 @@
+<div class="row">
+  <div class="col-lg-8 mx-auto text-center">
+    <div class="hero-section py-5">
+      <h1 class="display-4 fw-bold text-primary mb-4">
+        <%= t('messages.welcome') %>
+      </h1>
+      
+      <p class="lead mb-4">
+        Plan your perfect trip with the power of AI. Tell us where you want to go, 
+        and we'll help you create an amazing personalized itinerary.
+      </p>
+
+      <% if user_signed_in? %>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+          <%= link_to t('trips.new'), new_trip_path, class: "btn btn-primary btn-lg me-md-2" %>
+          <%= link_to t('trips.index'), trips_path, class: "btn btn-outline-primary btn-lg" %>
+        </div>
+        
+        <div class="mt-4">
+          <h3 class="h5">Your Recent Trips</h3>
+          <% recent_trips = current_user.trips.recent.limit(3) %>
+          <% if recent_trips.any? %>
+            <div class="row">
+              <% recent_trips.each do |trip| %>
+                <div class="col-md-4 mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><%= trip.title %></h6>
+                      <p class="card-text small text-muted">
+                        <%= trip.status.humanize %> 
+                        <% if trip.start_date %>
+                          • <%= trip.start_date.strftime("%b %d") %>
+                        <% end %>
+                      </p>
+                      <%= link_to "View", trip, class: "btn btn-sm btn-outline-primary" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-muted">No trips yet. Create your first trip!</p>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+          <%= link_to t('nav.sign_up'), new_user_registration_path, class: "btn btn-primary btn-lg me-md-2" %>
+          <%= link_to t('nav.login'), new_user_session_path, class: "btn btn-outline-primary btn-lg" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-4 text-center">
+    <div class="feature-box p-4">
+      <i class="bi bi-chat-dots fs-1 text-primary mb-3"></i>
+      <h4>AI-Powered Planning</h4>
+      <p class="text-muted">
+        Simply chat with our AI to describe your ideal trip. 
+        It understands your preferences and creates personalized recommendations.
+      </p>
+    </div>
+  </div>
+  
+  <div class="col-md-4 text-center">
+    <div class="feature-box p-4">
+      <i class="bi bi-map fs-1 text-primary mb-3"></i>
+      <h4>Interactive Maps</h4>
+      <p class="text-muted">
+        Visualize your trip with interactive maps showing routes, 
+        accommodations, activities, and points of interest.
+      </p>
+    </div>
+  </div>
+  
+  <div class="col-md-4 text-center">
+    <div class="feature-box p-4">
+      <i class="bi bi-people fs-1 text-primary mb-3"></i>
+      <h4>Collaborate & Share</h4>
+      <p class="text-muted">
+        Share your trips with friends and family. 
+        Collaborate on planning and get input from your travel companions.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+es:
+  hello: "Hola mundo"
+  
+  # Navigation
+  nav:
+    home: "Inicio"
+    trips: "Viajes"
+    profile: "Perfil"
+    logout: "Cerrar sesión"
+    login: "Iniciar sesión"
+    sign_up: "Registrarse"
+  
+  # Trip planning
+  trips:
+    new: "Nuevo viaje"
+    edit: "Editar viaje"
+    show: "Ver viaje"
+    index: "Mis viajes"
+    title: "Título del viaje"
+    description: "Descripción"
+    start_date: "Fecha de inicio"
+    end_date: "Fecha de fin"
+    create: "Crear viaje"
+    update: "Actualizar viaje"
+    delete: "Eliminar viaje"
+    
+  # Chat interface
+  chat:
+    placeholder: "Cuéntame sobre tu viaje..."
+    send: "Enviar"
+    ai_thinking: "Pensando..."
+    
+  # Authentication
+  auth:
+    sign_in: "Iniciar sesión"
+    sign_up: "Registrarse"
+    sign_out: "Cerrar sesión"
+    email: "Correo electrónico"
+    password: "Contraseña"
+    password_confirmation: "Confirmar contraseña"
+    remember_me: "Recordarme"
+    forgot_password: "¿Olvidaste tu contraseña?"
+    
+  # Common actions
+  actions:
+    save: "Guardar"
+    cancel: "Cancelar"
+    edit: "Editar"
+    delete: "Eliminar"
+    back: "Volver"
+    next: "Siguiente"
+    previous: "Anterior"
+    
+  # Messages
+  messages:
+    welcome: "¡Bienvenido a AI Travel!"
+    trip_created: "Viaje creado exitosamente"
+    trip_updated: "Viaje actualizado exitosamente"
+    trip_deleted: "Viaje eliminado exitosamente" 
