@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_211836) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_221311) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -26,6 +26,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_211836) do
     t.jsonb "sharing_settings", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_public", default: false, null: false
     t.index ["sharing_settings"], name: "index_trips_on_sharing_settings", using: :gin
     t.index ["trip_data"], name: "index_trips_on_trip_data", using: :gin
     t.index ["user_id", "status"], name: "index_trips_on_user_id_and_status"

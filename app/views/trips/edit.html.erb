@@ -1,2 +1,74 @@
-<h1>Trips#edit</h1>
-<p>Find me in app/views/trips/edit.html.erb</p>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4"><%= t('trips.edit_trip') %></h2>
+
+          <%= form_with(model: @trip, local: true) do |form| %>
+            <% if @trip.errors.any? %>
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h6 class="alert-heading">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  <%= pluralize(@trip.errors.count, "error") %> prohibited this trip from being saved:
+                </h6>
+                <ul class="mb-0">
+                  <% @trip.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% end %>
+
+            <div class="mb-3">
+              <%= form.label :name, t('trips.name'), class: "form-label" %>
+              <%= form.text_field :name, class: "form-control", autofocus: true, required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :description, t('trips.description'), class: "form-label" %>
+              <%= form.text_area :description, rows: 3, class: "form-control", 
+                  placeholder: t('trips.description_placeholder') %>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <%= form.label :start_date, t('trips.start_date'), class: "form-label" %>
+                <%= form.date_field :start_date, class: "form-control" %>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= form.label :end_date, t('trips.end_date'), class: "form-label" %>
+                <%= form.date_field :end_date, class: "form-control" %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :status, t('trips.status_label'), class: "form-label" %>
+              <%= form.select :status, 
+                  options_for_select([
+                    [t('trips.status.planning'), 'planning'],
+                    [t('trips.status.active'), 'active'],
+                    [t('trips.status.completed'), 'completed']
+                  ], @trip.status), 
+                  {}, 
+                  { class: "form-select" } %>
+            </div>
+
+            <div class="mb-3 form-check">
+              <%= form.check_box :is_public, class: "form-check-input" %>
+              <%= form.label :is_public, t('trips.make_public'), class: "form-check-label" %>
+              <small class="form-text text-muted d-block"><%= t('trips.public_description') %></small>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <%= link_to t('actions.show'), @trip, class: "btn btn-outline-secondary" %>
+              <%= link_to t('actions.cancel'), trips_path, class: "btn btn-secondary" %>
+              <%= form.submit t('trips.update_trip'), class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

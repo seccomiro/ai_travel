@@ -4,6 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  # Callbacks
+  after_initialize :set_default_preferred_language
+
   # Validations
   validates :preferred_language, inclusion: { in: %w[en es] }
   validates :first_name, :last_name, presence: true, length: { maximum: 100 }
@@ -19,5 +22,19 @@ class User < ApplicationRecord
 
   def display_name
     full_name.present? ? full_name : email
+  end
+
+  def initials
+    if first_name.present? && last_name.present?
+      "#{first_name[0]}#{last_name[0]}".upcase
+    else
+      email[0].upcase
+    end
+  end
+
+  private
+
+  def set_default_preferred_language
+    self.preferred_language ||= 'en'
   end
 end

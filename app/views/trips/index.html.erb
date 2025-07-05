@@ -1,2 +1,54 @@
-<h1>Trips#index</h1>
-<p>Find me in app/views/trips/index.html.erb</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><%= t('trips.my_trips') %></h1>
+        <%= link_to t('trips.new_trip'), new_trip_path, class: "btn btn-primary" %>
+      </div>
+
+      <% if @trips.any? %>
+        <div class="row">
+          <% @trips.each do |trip| %>
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title"><%= trip.name %></h5>
+                  <p class="card-text text-muted">
+                    <%= trip.description.present? ? truncate(trip.description, length: 100) : t('trips.no_description') %>
+                  </p>
+                  <div class="mb-2">
+                    <span class="badge bg-<%= trip.status == 'active' ? 'success' : trip.status == 'planning' ? 'primary' : 'secondary' %>">
+                      <%= t("trips.status.#{trip.status}") %>
+                    </span>
+                  </div>
+                  <div class="text-muted small mb-3">
+                    <i class="bi bi-calendar"></i> <%= l(trip.created_at, format: :short) %>
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                  <div class="btn-group w-100" role="group">
+                    <%= link_to t('actions.view'), trip_path(trip), class: "btn btn-outline-primary btn-sm" %>
+                    <%= link_to t('actions.edit'), edit_trip_path(trip), class: "btn btn-outline-secondary btn-sm" %>
+                    <%= link_to t('actions.delete'), trip_path(trip), method: :delete, 
+                        class: "btn btn-outline-danger btn-sm", 
+                        data: { 
+                          confirm: t('trips.confirm_delete', name: trip.name),
+                          turbo_method: :delete 
+                        } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-5">
+          <i class="bi bi-map display-1 text-muted"></i>
+          <h3 class="text-muted mt-3"><%= t('trips.no_trips') %></h3>
+          <p class="text-muted"><%= t('trips.no_trips_description') %></p>
+          <%= link_to t('trips.create_first_trip'), new_trip_path, class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
