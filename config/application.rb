@@ -33,6 +33,9 @@ module Tripyo
     # Disable host authorization in test environment
     if Rails.env.test?
       config.hosts.clear
+      config.hosts << "www.example.com"
+      config.hosts << "example.com"
+      config.hosts << "test.host"
     end
   end
 end

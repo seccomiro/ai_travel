@@ -53,4 +53,10 @@ Rails.application.configure do
 
   # Disable host authorization for tests
   config.hosts.clear
+  config.hosts << "www.example.com"
+  config.hosts << "example.com"
+  config.hosts << "test.host"
+  config.hosts << "localhost"
+  config.hosts << "127.0.0.1"
+  config.hosts << "::1"
 end

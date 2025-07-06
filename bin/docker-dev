@@ -4,6 +4,9 @@
 
 set -e
 
+# Set custom project name to avoid ai_travel naming
+export COMPOSE_PROJECT_NAME=tripyo
+
 case "$1" in
   "setup")
     echo "🚀 Setting up Docker development environment..."
@@ -60,17 +63,32 @@ case "$1" in
     ;;
     
   "shell")
-    docker compose exec web bash
+    echo "🐚 Opening shell in Docker container..."
+    docker compose run --rm web bash
     ;;
     
   "rails")
     shift
-    docker compose exec web bin/rails "$@"
+    echo "🚂 Running Rails command: $*"
+    docker compose run --rm web bin/rails "$@"
+    ;;
+    
+  "bundle")
+    shift
+    echo "📦 Running Bundle command: $*"
+    docker compose run --rm web bundle "$@"
     ;;
     
   "test")
     echo "🧪 Running tests in Docker..."
-    docker compose exec web bundle exec rspec
+    # Ensure test database is ready
+    docker compose run --rm -e RAILS_ENV=test web bin/rails db:migrate 2>/dev/null || true
+    # Run tests in a temporary container
+    if [ -n "$2" ]; then
+      docker compose run --rm -e RAILS_ENV=test web bundle exec rspec "$2"
+    else
+      docker compose run --rm -e RAILS_ENV=test web bundle exec rspec
+    fi
     ;;
     
   "local")
@@ -91,16 +109,18 @@ case "$1" in
     echo "  restart  - Restart all services"
     echo "  reset    - Reset environment (removes volumes and rebuilds)"
     echo "  logs     - Show logs (optionally specify service: logs web)"
-    echo "  shell    - Open bash shell in web container"
-    echo "  rails    - Run rails commands (e.g., docker-dev rails console)"
-    echo "  test     - Run test suite"
+    echo "  shell    - Open bash shell in web container (no services needed)"
+    echo "  rails    - Run rails commands (e.g., rails console) (no services needed)"
+    echo "  bundle   - Run bundle commands (e.g., bundle install) (no services needed)"
+    echo "  test     - Run test suite (optionally specify file: test spec/models/) (no services needed)"
     echo "  local    - Stop Docker and switch back to local development"
     echo ""
     echo "Examples:"
     echo "  bin/docker-dev setup     # First time setup"
     echo "  bin/docker-dev start     # Start development"
-    echo "  bin/docker-dev rails c   # Rails console"
-    echo "  bin/docker-dev test      # Run tests"
+    echo "  bin/docker-dev rails c   # Rails console (no services needed)"
+    echo "  bin/docker-dev test      # Run tests (no services needed)"
+    echo "  bin/docker-dev bundle install  # Install gems (no services needed)"
     echo "  bin/docker-dev local     # Back to local dev"
     ;;
 esac 
