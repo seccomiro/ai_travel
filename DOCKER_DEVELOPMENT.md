@@ -89,7 +89,7 @@ bin/docker-dev rails db:reset
 bin/docker-dev rails db:seed
 
 # Access PostgreSQL console
-docker compose exec postgres psql -U ai_travel -d ai_travel_development
+docker compose exec postgres psql -U tripyo -d tripyo_development
 ```
 
 ### Debugging
@@ -129,8 +129,8 @@ docker compose logs -f
 The Docker setup uses these environment variables:
 
 ```bash
-DATABASE_URL=postgres://ai_travel:password@postgres/ai_travel_development
-TEST_DATABASE_URL=postgres://ai_travel:password@postgres_test/ai_travel_test
+DATABASE_URL=postgres://tripyo:password@postgres/tripyo_development
+TEST_DATABASE_URL=postgres://tripyo:password@postgres_test/tripyo_test
 REDIS_URL=redis://redis:6379/0
 RAILS_ENV=development
 ```
@@ -184,7 +184,7 @@ lsof -i :5432
 
 ```bash
 # Check if PostgreSQL is ready
-docker compose exec postgres pg_isready -U ai_travel
+docker compose exec postgres pg_isready -U tripyo
 
 # Restart PostgreSQL
 docker compose restart postgres
@@ -248,7 +248,7 @@ docker compose exec redis redis-cli ping
 docker stats
 
 # Monitor specific container
-docker stats ai_travel_web_1
+docker stats tripyo_web_1
 ```
 
 ## 🆚 Docker vs Local Development

@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module AiTravel
+module Tripyo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
@@ -29,5 +29,10 @@ module AiTravel
     config.i18n.available_locales = [:en, :es]
     config.i18n.default_locale = :en
     config.i18n.fallbacks = [I18n.default_locale]
+
+    # Disable host authorization in test environment
+    if Rails.env.test?
+      config.hosts.clear
+    end
   end
 end

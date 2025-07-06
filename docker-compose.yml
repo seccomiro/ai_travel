@@ -2,9 +2,9 @@ services:
   postgres:
     image: pgvector/pgvector:pg15
     environment:
-      POSTGRES_USER: ai_travel
+      POSTGRES_USER: tripyo
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ai_travel_development
+      POSTGRES_DB: tripyo_development
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ai_travel"]
+      test: ["CMD-SHELL", "pg_isready -U tripyo"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -20,16 +20,16 @@ services:
   postgres_test:
     image: pgvector/pgvector:pg15
     environment:
-      POSTGRES_USER: ai_travel
+      POSTGRES_USER: tripyo
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ai_travel_test
+      POSTGRES_DB: tripyo_test
       POSTGRES_HOST_AUTH_METHOD: trust
     tmpfs:
       - /var/lib/postgresql/data
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ai_travel"]
+      test: ["CMD-SHELL", "pg_isready -U tripyo"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,14 +63,14 @@ services:
       redis:
         condition: service_healthy
     environment:
-      POSTGRES_USER: ai_travel
+      POSTGRES_USER: tripyo
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      POSTGRES_DATABASE: ai_travel_development
+      POSTGRES_DATABASE: tripyo_development
       TEST_POSTGRES_HOST: postgres_test
       TEST_POSTGRES_PORT: 5432
-      TEST_POSTGRES_DATABASE: ai_travel_test
+      TEST_POSTGRES_DATABASE: tripyo_test
       REDIS_URL: redis://redis:6379/0
       RAILS_ENV: development
     stdin_open: true
@@ -90,11 +90,11 @@ services:
       redis:
         condition: service_healthy
     environment:
-      POSTGRES_USER: ai_travel
+      POSTGRES_USER: tripyo
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      POSTGRES_DATABASE: ai_travel_development
+      POSTGRES_DATABASE: tripyo_development
       REDIS_URL: redis://redis:6379/0
       RAILS_ENV: development
 

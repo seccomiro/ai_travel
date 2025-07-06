@@ -1,6 +1,6 @@
-# 🚀 AI Travel Platform
+# 🚀 Tripyo
 
-An AI-powered travel planning platform that transforms trip planning from a research task into an intelligent, conversational experience.
+Tripyo is an AI-powered travel planning platform that transforms trip planning from a research task into an intelligent, conversational experience.
 
 ## 🎯 Features
 
@@ -152,10 +152,10 @@ kamal deploy
 
 ```bash
 # Build production image
-docker build -t ai_travel .
+docker build -t tripyo .
 
 # Run production container
-docker run -d -p 80:80 -e RAILS_MASTER_KEY=<key> ai_travel
+docker run -d -p 80:80 -e RAILS_MASTER_KEY=<key> tripyo
 ```
 
 ## 📚 Development Phases
@@ -182,5 +182,5 @@ This project is private and proprietary.
 ## 🆘 Support
 
 - [Docker Development Guide](DOCKER_DEVELOPMENT.md)
-- [Development Plan](ai_travel_development_plan.md)
-- [Technical Roadmap](ai_travel_technical_roadmap.md)
+- [Development Plan](tripyo_development_plan.md)
+- [Technical Roadmap](tripyo_technical_roadmap.md)

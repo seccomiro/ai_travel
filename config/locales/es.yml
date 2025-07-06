@@ -92,7 +92,7 @@ es:
     
   # Messages
   messages:
-    welcome: "¡Bienvenido a AI Travel!"
+    welcome: "¡Bienvenido a Tripyo!"
     trip_created: "Viaje creado exitosamente"
     trip_updated: "Viaje actualizado exitosamente"
     trip_deleted: "Viaje eliminado exitosamente" 

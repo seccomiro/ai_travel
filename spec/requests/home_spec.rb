@@ -9,7 +9,7 @@ RSpec.describe "Home", type: :request do
 
     it "renders the home page" do
       get root_path
-      expect(response.body).to include("AI Travel")
+      expect(response.body).to include("Tripyo")
     end
   end
 end

@@ -80,7 +80,7 @@ case "$1" in
     ;;
     
   *)
-    echo "🐳 AI Travel Docker Development Helper"
+    echo "🐳 Tripyo Docker Development Helper"
     echo ""
     echo "Usage: bin/docker-dev <command>"
     echo ""

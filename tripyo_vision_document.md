@@ -1,9 +1,9 @@
 
-# Vision Document – AI-Powered Travel Planning Platform
+# Vision Document – Tripyo
 
 ## Overview
 
-The platform aims to help users plan personalized trips through an intelligent, interactive assistant powered by AI. The user will engage in a conversation with the system to build their travel itinerary step-by-step, with suggestions, constraints, and optimizations presented in real time.
+Tripyo aims to help users plan personalized trips through an intelligent, interactive assistant powered by AI. The user will engage in a conversation with the system to build their travel itinerary step-by-step, with suggestions, constraints, and optimizations presented in real time.
 
 ---
 

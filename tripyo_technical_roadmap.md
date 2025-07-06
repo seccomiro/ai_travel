@@ -1,5 +1,5 @@
 
-# 🗺️ Technical Roadmap – AI Travel Planning Platform
+# 🗺️ Technical Roadmap – Tripyo
 
 ## 🔰 Phase 0: Project Initialization (Week 1)
 

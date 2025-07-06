@@ -147,7 +147,7 @@ en:
   
   # Messages
   messages:
-    welcome: "Welcome to AI Travel!"
+    welcome: "Welcome to Tripyo!"
     trip_created: "Trip created successfully"
     trip_updated: "Trip updated successfully"
     trip_deleted: "Trip deleted successfully"

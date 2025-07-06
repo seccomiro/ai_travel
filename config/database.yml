@@ -22,7 +22,7 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DATABASE', 'ai_travel_development') %>
+  database: <%= ENV.fetch('POSTGRES_DATABASE', 'tripyo_development') %>
   username: <%= ENV.fetch('POSTGRES_USER', '') %>
   password: <%= ENV.fetch('POSTGRES_PASSWORD', '') %>
   host: <%= ENV.fetch('POSTGRES_HOST', 'localhost') %>
@@ -42,7 +42,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV.fetch('TEST_POSTGRES_DATABASE', 'ai_travel_test') %>
+  database: <%= ENV.fetch('TEST_POSTGRES_DATABASE', 'tripyo_test') %>
   username: <%= ENV.fetch('POSTGRES_USER', '') %>
   password: <%= ENV.fetch('POSTGRES_PASSWORD', '') %>
   host: <%= ENV.fetch('TEST_POSTGRES_HOST', ENV.fetch('POSTGRES_HOST', 'localhost')) %>
@@ -71,18 +71,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: ai_travel_production
-    username: ai_travel
-    password: <%= ENV["AI_TRAVEL_DATABASE_PASSWORD"] %>
+    database: tripyo_production
+    username: tripyo
+    password: <%= ENV["TRIPYO_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: ai_travel_production_cache
+    database: tripyo_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: ai_travel_production_queue
+    database: tripyo_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: ai_travel_production_cable
+    database: tripyo_production_cable
     migrations_paths: db/cable_migrate
