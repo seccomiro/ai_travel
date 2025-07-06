@@ -69,14 +69,14 @@ class ChatSession < ApplicationRecord
     # Start with a system message to set context
     system_message = {
       role: 'system',
-      content: "You are Tripyo, an AI travel planning assistant. Help users plan their trips by providing personalized recommendations for destinations, accommodations, activities, and transportation. Use the available tools to get real-time information about weather, accommodation options, and route planning. Be conversational, helpful, and proactive in suggesting next steps for trip planning."
+      content: 'You are Tripyo, an AI travel planning assistant. Help users plan their trips by providing personalized recommendations for destinations, accommodations, activities, and transportation. Use the available tools to get real-time information about weather, accommodation options, and route planning. Be conversational, helpful, and proactive in suggesting next steps for trip planning.'
     }
-    
+
     # Add conversation history
     messages = chat_messages.order(:created_at).map do |message|
       { role: message.role, content: message.content }
     end
-    
+
     [system_message] + messages
   end
 

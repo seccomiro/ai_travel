@@ -25,18 +25,18 @@ class ChatSessionsController < ApplicationController
     if @message.save
       # Process with AI and create assistant response
       process_ai_response(@message)
-      
+
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: [
             # Remove the typing indicator
-            turbo_stream.update("ai-typing", ""),
+            turbo_stream.update('ai-typing', ''),
             # Add the AI response
-            turbo_stream.append("chat-messages", partial: "chat_messages/message", locals: { message: @chat_session.chat_messages.where(role: 'assistant').last }),
+            turbo_stream.append('chat-messages', partial: 'chat_messages/message', locals: { message: @chat_session.chat_messages.where(role: 'assistant').last }),
             # Reset the form
-            turbo_stream.update("message-form", partial: "chat_sessions/message_form", locals: { chat_session: @chat_session }),
+            turbo_stream.update('message-form', partial: 'chat_sessions/message_form', locals: { chat_session: @chat_session }),
             # Update trip sidebar
-            turbo_stream.update("trip-sidebar", partial: "trips/sidebar_content", locals: { trip: @trip })
+            turbo_stream.update('trip-sidebar', partial: 'trips/sidebar_content', locals: { trip: @trip })
           ]
         end
         format.html { redirect_to trip_chat_session_path(@trip, @chat_session) }
@@ -46,14 +46,14 @@ class ChatSessionsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: [
             # Remove typing indicator
-            turbo_stream.update("ai-typing", ""),
+            turbo_stream.update('ai-typing', ''),
             # Show error in form
-            turbo_stream.update("message-form", 
-              partial: "chat_sessions/message_form", 
-              locals: { chat_session: @chat_session, error: @message.errors.full_messages.join(", ") })
+            turbo_stream.update('message-form',
+              partial: 'chat_sessions/message_form',
+              locals: { chat_session: @chat_session, error: @message.errors.full_messages.join(', ') })
           ]
         end
-        format.html { redirect_to trip_chat_session_path(@trip, @chat_session), alert: @message.errors.full_messages.join(", ") }
+        format.html { redirect_to trip_chat_session_path(@trip, @chat_session), alert: @message.errors.full_messages.join(', ') }
       end
     end
   end
@@ -85,13 +85,13 @@ class ChatSessionsController < ApplicationController
         # Execute tool calls and get results
         tool_results = []
         ai_result[:tool_calls].each do |tool_call|
-          tool_name = tool_call["function"]["name"]
-          arguments = JSON.parse(tool_call["function"]["arguments"])
+          tool_name = tool_call['function']['name']
+          arguments = JSON.parse(tool_call['function']['arguments'])
           result = TravelToolsService.call_tool(tool_name, arguments)
-          
+
           tool_results << {
-            tool_call_id: tool_call["id"],
-            role: "tool",
+            tool_call_id: tool_call['id'],
+            role: 'tool',
             name: tool_name,
             content: result.to_json
           }
@@ -144,10 +144,10 @@ class ChatSessionsController < ApplicationController
   def update_trip_from_conversation(user_message, ai_response)
     # Extract trip data from the conversation
     trip_data = @trip.trip_data || {}
-    
+
     # Update last chat timestamp
     trip_data['last_chat_update'] = Time.current.iso8601
-    
+
     # Extract destinations mentioned in the conversation
     if user_message.content.present?
       # Simple destination extraction (can be enhanced with NLP)
@@ -156,14 +156,14 @@ class ChatSessionsController < ApplicationController
         trip_data['destinations'] ||= []
         trip_data['destinations'] = (trip_data['destinations'] + destinations).uniq
       end
-      
+
       # Extract dates mentioned
       dates = extract_dates(user_message.content)
       if dates.any?
         trip_data['mentioned_dates'] ||= []
         trip_data['mentioned_dates'] = (trip_data['mentioned_dates'] + dates).uniq
       end
-      
+
       # Extract preferences
       preferences = extract_preferences(user_message.content)
       if preferences.any?
@@ -171,7 +171,7 @@ class ChatSessionsController < ApplicationController
         trip_data['preferences'].merge!(preferences)
       end
     end
-    
+
     # Update trip with extracted data
     @trip.update(trip_data: trip_data)
   end
@@ -180,43 +180,43 @@ class ChatSessionsController < ApplicationController
     # Simple regex-based extraction (can be enhanced with NLP)
     # Look for common city/country patterns
     destinations = []
-    
+
     # Common city patterns
     city_patterns = [
       /\b(?:visit|going to|travel to|planning to go to)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
       /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:in|to|for)\s+(?:my\s+)?trip/i
     ]
-    
+
     city_patterns.each do |pattern|
       matches = text.scan(pattern)
       destinations.concat(matches.flatten)
     end
-    
+
     destinations.uniq
   end
 
   def extract_dates(text)
     # Simple date extraction
     dates = []
-    
+
     # Common date patterns
     date_patterns = [
       /\b(?:in|on|from|to)\s+(\w+\s+\d{1,2},?\s+\d{4})/i,
       /\b(\d{1,2}\/\d{1,2}\/\d{4})/,
       /\b(\d{4}-\d{2}-\d{2})/
     ]
-    
+
     date_patterns.each do |pattern|
       matches = text.scan(pattern)
       dates.concat(matches.flatten)
     end
-    
+
     dates.uniq
   end
 
   def extract_preferences(text)
     preferences = {}
-    
+
     # Extract budget preferences
     if text.match?(/\b(?:budget|cheap|expensive|luxury|affordable)\b/i)
       if text.match?(/\b(?:budget|cheap|affordable)\b/i)
@@ -225,17 +225,17 @@ class ChatSessionsController < ApplicationController
         preferences['budget_level'] = 'luxury'
       end
     end
-    
+
     # Extract accommodation preferences
     if text.match?(/\b(?:hotel|hostel|apartment|airbnb|resort)\b/i)
       preferences['accommodation_type'] = text.match(/\b(hotel|hostel|apartment|airbnb|resort)\b/i)[1].downcase
     end
-    
+
     # Extract transportation preferences
     if text.match?(/\b(?:car|train|plane|bus|walking)\b/i)
       preferences['transportation'] = text.match(/\b(car|train|plane|bus|walking)\b/i)[1].downcase
     end
-    
+
     preferences
   end
 end

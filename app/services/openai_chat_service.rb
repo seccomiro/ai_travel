@@ -1,7 +1,7 @@
 require 'openai'
 
 class OpenaiChatService
-  DEFAULT_MODEL = "gpt-4o" # or "gpt-4-turbo-preview" if preferred
+  DEFAULT_MODEL = 'gpt-4o' # or "gpt-4-turbo-preview" if preferred
   DEFAULT_TEMPERATURE = 0.7
 
   def initialize(api_key: Rails.application.credentials.open_ai_api_key)
@@ -17,11 +17,11 @@ class OpenaiChatService
     }
     params[:tools] = tools || default_tools if tools != false
     response = @client.chat(parameters: params)
-    if response.dig("choices", 0, "message", "content")
+    if response.dig('choices', 0, 'message', 'content')
       {
-        content: response["choices"][0]["message"]["content"],
-        usage: response["usage"],
-        tool_calls: response["choices"][0]["message"]["tool_calls"]
+        content: response['choices'][0]['message']['content'],
+        usage: response['usage'],
+        tool_calls: response['choices'][0]['message']['tool_calls']
       }
     else
       raise "OpenAI API error: #{response['error'] || response}"
@@ -36,76 +36,76 @@ class OpenaiChatService
   def default_tools
     [
       {
-        type: "function",
+        type: 'function',
         function: {
-          name: "get_weather",
-          description: "Get current weather information for a specific location",
+          name: 'get_weather',
+          description: 'Get current weather information for a specific location',
           parameters: {
-            type: "object",
+            type: 'object',
             properties: {
               location: {
-                type: "string",
+                type: 'string',
                 description: "The city and country name (e.g., 'Paris, France')"
               }
             },
-            required: ["location"]
+            required: ['location']
           }
         }
       },
       {
-        type: "function",
+        type: 'function',
         function: {
-          name: "search_accommodation",
-          description: "Search for accommodation options in a specific location",
+          name: 'search_accommodation',
+          description: 'Search for accommodation options in a specific location',
           parameters: {
-            type: "object",
+            type: 'object',
             properties: {
               location: {
-                type: "string",
+                type: 'string',
                 description: "The city and country name (e.g., 'Paris, France')"
               },
               check_in: {
-                type: "string",
-                description: "Check-in date in YYYY-MM-DD format"
+                type: 'string',
+                description: 'Check-in date in YYYY-MM-DD format'
               },
               check_out: {
-                type: "string",
-                description: "Check-out date in YYYY-MM-DD format"
+                type: 'string',
+                description: 'Check-out date in YYYY-MM-DD format'
               },
               guests: {
-                type: "integer",
-                description: "Number of guests"
+                type: 'integer',
+                description: 'Number of guests'
               }
             },
-            required: ["location"]
+            required: ['location']
           }
         }
       },
       {
-        type: "function",
+        type: 'function',
         function: {
-          name: "plan_route",
-          description: "Plan a route between two or more destinations",
+          name: 'plan_route',
+          description: 'Plan a route between two or more destinations',
           parameters: {
-            type: "object",
+            type: 'object',
             properties: {
               destinations: {
-                type: "array",
+                type: 'array',
                 items: {
-                  type: "string"
+                  type: 'string'
                 },
                 description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])"
               },
               transport_mode: {
-                type: "string",
-                enum: ["car", "train", "plane", "bus"],
-                description: "Preferred mode of transportation"
+                type: 'string',
+                enum: ['car', 'train', 'plane', 'bus'],
+                description: 'Preferred mode of transportation'
               }
             },
-            required: ["destinations"]
+            required: ['destinations']
           }
         }
       }
     ]
   end
-end 
+end

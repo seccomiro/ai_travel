@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     member do
       patch :update_status
     end
-    
+
     resources :chat_sessions, only: [:show, :create] do
       member do
         post :create_message

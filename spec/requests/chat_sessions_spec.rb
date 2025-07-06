@@ -18,7 +18,7 @@ RSpec.describe "ChatSessions", type: :request do
     it "redirects if user doesn't own the trip" do
       other_trip = create(:trip)
       other_chat_session = create(:chat_session, trip: other_trip)
-      
+
       get trip_chat_session_path(other_trip, other_chat_session)
       expect(response).to redirect_to(trips_path)
     end
@@ -29,7 +29,7 @@ RSpec.describe "ChatSessions", type: :request do
       expect {
         post trip_chat_sessions_path(trip)
       }.to change(ChatSession, :count).by(1)
-      
+
       expect(response).to redirect_to(trip_chat_session_path(trip, ChatSession.last))
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "ChatSessions", type: :request do
       expect {
         post create_message_trip_chat_session_path(trip, chat_session), params: { content: "Hello AI!" }
       }.to change(ChatMessage, :count).by(2) # User message + AI response
-      
+
       expect(response).to have_http_status(:success)
     end
 
@@ -47,7 +47,7 @@ RSpec.describe "ChatSessions", type: :request do
       expect {
         post create_message_trip_chat_session_path(trip, chat_session), params: { content: "" }
       }.not_to change(ChatMessage, :count)
-      
+
       expect(response).to have_http_status(:success)
     end
   end
