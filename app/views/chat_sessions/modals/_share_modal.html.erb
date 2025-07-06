@@ -1,0 +1,62 @@
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel"><%= t('trips.share_trip') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="shareLink" class="form-label"><%= t('trips.share_link') %></label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="shareLink" value="<%= trip_url(trip) %>" readonly>
+            <button class="btn btn-outline-secondary" type="button" onclick="copyShareLink()">
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= t('trips.share_permissions') %></label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="sharePermission" id="shareView" value="view" checked>
+            <label class="form-check-label" for="shareView">
+              <%= t('trips.view_only') %>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="sharePermission" id="shareEdit" value="edit">
+            <label class="form-check-label" for="shareEdit">
+              <%= t('trips.can_edit') %>
+            </label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="shareEmail" class="form-label"><%= t('trips.share_via_email') %></label>
+          <div class="input-group">
+            <input type="email" class="form-control" id="shareEmail" placeholder="<%= t('trips.enter_email') %>">
+            <button class="btn btn-primary" type="button" onclick="shareViaEmail()">
+              <i class="bi bi-envelope"></i> <%= t('actions.send') %>
+            </button>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= t('trips.share_social') %></label>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="shareToSocial('twitter')">
+              <i class="bi bi-twitter"></i> Twitter
+            </button>
+            <button class="btn btn-outline-primary" onclick="shareToSocial('facebook')">
+              <i class="bi bi-facebook"></i> Facebook
+            </button>
+            <button class="btn btn-outline-primary" onclick="shareToSocial('linkedin')">
+              <i class="bi bi-linkedin"></i> LinkedIn
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('actions.close') %></button>
+      </div>
+    </div>
+  </div>
+</div> 

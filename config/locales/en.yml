@@ -47,6 +47,17 @@ en:
     send: "Send"
     ai_thinking: "Thinking..."
     
+  # Chat sessions
+  chat_sessions:
+    title: "Trip Planning Chat"
+    message_placeholder: "Tell me about your trip plans..."
+    message_hint: "Ask about destinations, activities, accommodation, or anything else!"
+    sending: "Sending..."
+    typing: "AI is typing..."
+    you: "You"
+    assistant: "Tripyo AI"
+    create_error: "Failed to create chat session"
+    
   # Authentication
   auth:
     sign_in: "Sign in"
@@ -71,6 +82,10 @@ en:
     previous: "Previous"
     view: "View"
     show: "Show"
+    back_to_trip: "Back to Trip"
+    close: "Close"
+    send: "Send"
+    export: "Export"
     
   # Home page
   home:
@@ -144,6 +159,33 @@ en:
       planning: "Planning"
       active: "Active"
       completed: "Completed"
+    continue_chat: "Continue Chat"
+    trip_info: "Trip Information"
+    overview: "Overview"
+    details: "Details"
+    live_data: "Live Trip Data"
+    destinations: "Destinations"
+    accommodations: "Accommodations"
+    transportation: "Transportation"
+    estimated_cost: "Estimated Cost"
+    no_data_yet: "No trip data yet"
+    start_chatting: "Start chatting to build your trip!"
+    settings: "Trip Settings"
+    export_trip: "Export Trip"
+    share_trip: "Share Trip"
+    export_format: "Export Format"
+    export_options: "Export Options"
+    include_chat_history: "Include chat history"
+    include_map: "Include map"
+    include_cost_breakdown: "Include cost breakdown"
+    share_link: "Share Link"
+    share_permissions: "Share Permissions"
+    view_only: "View only"
+    can_edit: "Can edit"
+    share_via_email: "Share via Email"
+    enter_email: "Enter email address"
+    share_social: "Share on Social Media"
+    access_denied: "Access denied"
   
   # Messages
   messages:

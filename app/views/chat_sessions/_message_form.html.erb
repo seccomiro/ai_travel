@@ -1,0 +1,60 @@
+<div id="message-form">
+  <%= form_with url: create_message_trip_chat_session_path(@trip, chat_session), 
+                method: :post, 
+                local: false,
+                data: { 
+                  controller: "chat-form",
+                  action: "submit->chat-form#handleSubmit"
+                } do |form| %>
+    
+    <% if local_assigns[:error].present? %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% end %>
+
+    <div class="input-group">
+      <%= form.text_area :content, 
+                        class: "form-control", 
+                        placeholder: t('chat_sessions.message_placeholder'),
+                        rows: 2,
+                        data: { 
+                          action: "keydown->chat-form#handleKeydown",
+                          chat_form_target: "input"
+                        } %>
+      <button class="btn btn-primary" type="submit" data-chat-form-target="submitButton" data-disable-with="<%= t('chat_sessions.sending') %>">
+        <i class="bi bi-send"></i>
+      </button>
+    </div>
+
+    <div class="form-text mt-2">
+      <small class="text-muted">
+        <i class="bi bi-info-circle"></i>
+        <%= t('chat_sessions.message_hint') %>
+      </small>
+    </div>
+  <% end %>
+</div>
+
+<!-- AI Typing Indicator -->
+<div id="ai-typing" class="message mb-3 assistant-message" style="display: none;">
+  <div class="d-flex justify-content-start">
+    <div class="message-bubble bg-light p-3 rounded" style="max-width: 70%;">
+      <div class="message-header mb-2">
+        <small class="text-muted">
+          <i class="bi bi-robot"></i>
+          <%= t('chat_sessions.assistant') %>
+        </small>
+      </div>
+      <div class="message-content">
+        <div class="typing-indicator">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <small class="text-muted"><%= t('chat_sessions.typing') %></small>
+      </div>
+    </div>
+  </div>
+</div> 

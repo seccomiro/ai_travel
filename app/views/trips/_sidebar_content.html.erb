@@ -1,0 +1,149 @@
+<div id="trip-sidebar-content">
+  <!-- Trip Overview -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="card-title"><%= t('trips.overview') %></h6>
+      
+      <div class="row text-center mb-3">
+        <div class="col-4">
+          <div class="border rounded p-2">
+            <h6 class="text-muted mb-0"><%= t('trips.days') %></h6>
+            <span class="fs-5 fw-bold">
+              <%= trip.start_date && trip.end_date ? (trip.end_date - trip.start_date).to_i + 1 : '-' %>
+            </span>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="border rounded p-2">
+            <h6 class="text-muted mb-0"><%= t('trips.segments') %></h6>
+            <span class="fs-5 fw-bold" id="trip-segments-count">
+              <%= trip.trip_data.dig('segments', 'count') || 0 %>
+            </span>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="border rounded p-2">
+            <h6 class="text-muted mb-0"><%= t('trips.activities') %></h6>
+            <span class="fs-5 fw-bold" id="trip-activities-count">
+              <%= trip.trip_data.dig('activities', 'count') || 0 %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <span class="badge <%= trip.status_badge_class %> fs-6">
+          <%= t("trips.status.#{trip.status}") %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trip Details -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="card-title"><%= t('trips.details') %></h6>
+      
+      <% if trip.start_date.present? %>
+        <div class="mb-2">
+          <small class="text-muted"><%= t('trips.start_date') %></small>
+          <div><i class="bi bi-calendar-event"></i> <%= l(trip.start_date, format: :long) %></div>
+        </div>
+      <% end %>
+      
+      <% if trip.end_date.present? %>
+        <div class="mb-2">
+          <small class="text-muted"><%= t('trips.end_date') %></small>
+          <div><i class="bi bi-calendar-event"></i> <%= l(trip.end_date, format: :long) %></div>
+        </div>
+      <% end %>
+
+      <% if trip.description.present? %>
+        <div class="mb-2">
+          <small class="text-muted"><%= t('trips.description') %></small>
+          <div><%= simple_format(trip.description) %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Live Trip Data -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="card-title"><%= t('trips.live_data') %></h6>
+      
+      <div id="trip-live-data">
+        <% if trip.trip_data.present? %>
+          <!-- Destinations -->
+          <% if trip.trip_data.dig('destinations')&.any? %>
+            <div class="mb-3">
+              <h6 class="text-muted"><%= t('trips.destinations') %></h6>
+              <% trip.trip_data['destinations'].each do |destination| %>
+                <div class="badge bg-info me-1 mb-1">
+                  <i class="bi bi-geo-alt"></i> <%= destination['name'] %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Accommodations -->
+          <% if trip.trip_data.dig('accommodations')&.any? %>
+            <div class="mb-3">
+              <h6 class="text-muted"><%= t('trips.accommodations') %></h6>
+              <% trip.trip_data['accommodations'].each do |accommodation| %>
+                <div class="border rounded p-2 mb-1">
+                  <small class="text-muted"><%= accommodation['type'] %></small>
+                  <div><%= accommodation['name'] %></div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Activities -->
+          <% if trip.trip_data.dig('activities')&.any? %>
+            <div class="mb-3">
+              <h6 class="text-muted"><%= t('trips.activities') %></h6>
+              <% trip.trip_data['activities'].each do |activity| %>
+                <div class="border rounded p-2 mb-1">
+                  <small class="text-muted"><%= activity['type'] %></small>
+                  <div><%= activity['name'] %></div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Transportation -->
+          <% if trip.trip_data.dig('transportation')&.any? %>
+            <div class="mb-3">
+              <h6 class="text-muted"><%= t('trips.transportation') %></h6>
+              <% trip.trip_data['transportation'].each do |transport| %>
+                <div class="border rounded p-2 mb-1">
+                  <small class="text-muted"><%= transport['type'] %></small>
+                  <div><%= transport['description'] %></div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-center text-muted py-3">
+            <i class="bi bi-chat-dots fs-1"></i>
+            <p class="mt-2"><%= t('trips.no_data_yet') %></p>
+            <small><%= t('trips.start_chatting') %></small>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estimated Cost -->
+  <% if trip.estimated_total_cost > 0 %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h6 class="card-title"><%= t('trips.estimated_cost') %></h6>
+        <div class="fs-4 fw-bold text-success">
+          $<%= number_with_precision(trip.estimated_total_cost, precision: 2) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div> 

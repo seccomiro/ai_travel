@@ -1,5 +1,6 @@
 class Trip < ApplicationRecord
   belongs_to :user
+  has_many :chat_sessions, dependent: :destroy
 
   # Callbacks
   after_initialize :set_defaults
@@ -92,6 +93,18 @@ class Trip < ApplicationRecord
   def add_trip_data(key, value)
     self.trip_data ||= {}
     self.trip_data[key] = value
+  end
+
+  def active_chat_session
+    chat_sessions.active.first
+  end
+
+  def create_chat_session(user)
+    chat_sessions.create!(user: user, status: 'active')
+  end
+
+  def has_active_chat_session?
+    chat_sessions.active.exists?
   end
 
   private
