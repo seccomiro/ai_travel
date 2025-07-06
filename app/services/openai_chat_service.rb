@@ -4,8 +4,8 @@ class OpenaiChatService
   DEFAULT_MODEL = 'gpt-4o' # or "gpt-4-turbo-preview" if preferred
   DEFAULT_TEMPERATURE = 0.7
 
-  def initialize(api_key: Rails.application.credentials.open_ai_api_key)
-    @client = OpenAI::Client.new(access_token: api_key)
+  def initialize(api_key: Rails.application.credentials.open_ai_api_key, client: nil)
+    @client = client || OpenAI::Client.new(access_token: api_key)
   end
 
   # messages: [{role: 'user'|'assistant'|'system', content: '...'}]
@@ -26,9 +26,6 @@ class OpenaiChatService
     else
       raise "OpenAI API error: #{response['error'] || response}"
     end
-  rescue => e
-    Rails.logger.error("OpenAI Chat Error: #{e.message}")
-    nil
   end
 
   private
