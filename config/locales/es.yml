@@ -1,6 +1,6 @@
 es:
   hello: "Hola mundo"
-  
+
   # Navigation
   nav:
     home: "Inicio"
@@ -9,7 +9,7 @@ es:
     logout: "Cerrar sesión"
     login: "Iniciar sesión"
     sign_up: "Registrarse"
-  
+
   # Trip planning
   trips:
     new: "Nuevo viaje"
@@ -58,13 +58,13 @@ es:
       planning: "Planificando"
       active: "Activo"
       completed: "Completado"
-    
+
   # Chat interface
   chat:
     placeholder: "Cuéntame sobre tu viaje..."
     send: "Enviar"
     ai_thinking: "Pensando..."
-    
+
   # Authentication
   auth:
     sign_in: "Iniciar sesión"
@@ -77,7 +77,7 @@ es:
     forgot_password: "¿Olvidaste tu contraseña?"
     first_name: "Nombre"
     last_name: "Apellido"
-    
+
   # Common actions
   actions:
     save: "Guardar"
@@ -89,10 +89,10 @@ es:
     previous: "Anterior"
     view: "Ver"
     show: "Mostrar"
-    
+
   # Messages
   messages:
     welcome: "¡Bienvenido a Tripyo!"
     trip_created: "Viaje creado exitosamente"
     trip_updated: "Viaje actualizado exitosamente"
-    trip_deleted: "Viaje eliminado exitosamente" 
+    trip_deleted: "Viaje eliminado exitosamente"

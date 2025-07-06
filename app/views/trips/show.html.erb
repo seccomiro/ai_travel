@@ -5,11 +5,11 @@
         <h1><%= @trip.name %></h1>
         <div class="btn-group" role="group">
           <%= link_to t('actions.edit'), edit_trip_path(@trip), class: "btn btn-outline-primary" %>
-          <%= link_to t('actions.delete'), trip_path(@trip), method: :delete, 
-              class: "btn btn-outline-danger", 
-              data: { 
+          <%= link_to t('actions.delete'), trip_path(@trip), method: :delete,
+              class: "btn btn-outline-danger",
+              data: {
                 confirm: t('trips.confirm_delete', name: @trip.name),
-                turbo_method: :delete 
+                turbo_method: :delete
               } %>
         </div>
       </div>
@@ -21,7 +21,7 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title"><%= t('trips.trip_details') %></h5>
-          
+
           <% if @trip.description.present? %>
             <div class="mb-3">
               <h6 class="text-muted"><%= t('trips.description') %></h6>
@@ -36,7 +36,7 @@
                 <p><i class="bi bi-calendar-event"></i> <%= l(@trip.start_date, format: :long) %></p>
               </div>
             <% end %>
-            
+
             <% if @trip.end_date.present? %>
               <div class="col-md-6 mb-3">
                 <h6 class="text-muted"><%= t('trips.end_date') %></h6>
@@ -52,7 +52,7 @@
                 <%= t("trips.status.#{@trip.status}") %>
               </span>
             </div>
-            
+
             <div class="col-md-6 mb-3">
               <h6 class="text-muted"><%= t('trips.visibility') %></h6>
               <span class="badge bg-<%= @trip.is_public ? 'info' : 'secondary' %> fs-6">
@@ -88,11 +88,11 @@
             <% else %>
               <%= link_to t('trips.start_planning'), trip_chat_sessions_path(@trip), data: { turbo_method: :post }, class: "btn btn-primary" %>
             <% end %>
-            <%= link_to t('trips.view_map'), "#", class: "btn btn-outline-secondary", 
+            <%= link_to t('trips.view_map'), "#", class: "btn btn-outline-secondary",
                 data: { bs_toggle: "tooltip", bs_title: t('trips.feature_coming_soon') } %>
-            <%= link_to t('trips.export_pdf'), "#", class: "btn btn-outline-info", 
+            <%= link_to t('trips.export_pdf'), "#", class: "btn btn-outline-info",
                 data: { bs_toggle: "tooltip", bs_title: t('trips.feature_coming_soon') } %>
-            <%= link_to t('trips.share_trip'), "#", class: "btn btn-outline-success", 
+            <%= link_to t('trips.share_trip'), "#", class: "btn btn-outline-success",
                 data: { bs_toggle: "tooltip", bs_title: t('trips.feature_coming_soon') } %>
           </div>
         </div>

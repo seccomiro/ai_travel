@@ -3,7 +3,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <h6 class="card-title"><%= t('trips.overview') %></h6>
-      
+
       <div class="row text-center mb-3">
         <div class="col-4">
           <div class="border rounded p-2">
@@ -43,14 +43,14 @@
   <div class="card mb-3">
     <div class="card-body">
       <h6 class="card-title"><%= t('trips.details') %></h6>
-      
+
       <% if trip.start_date.present? %>
         <div class="mb-2">
           <small class="text-muted"><%= t('trips.start_date') %></small>
           <div><i class="bi bi-calendar-event"></i> <%= l(trip.start_date, format: :long) %></div>
         </div>
       <% end %>
-      
+
       <% if trip.end_date.present? %>
         <div class="mb-2">
           <small class="text-muted"><%= t('trips.end_date') %></small>
@@ -71,7 +71,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <h6 class="card-title"><%= t('trips.live_data') %></h6>
-      
+
       <div id="trip-live-data">
         <% if trip.trip_data.present? %>
           <!-- Destinations -->
@@ -146,4 +146,4 @@
       </div>
     </div>
   <% end %>
-</div> 
+</div>

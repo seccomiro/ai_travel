@@ -29,7 +29,7 @@
 
 en:
   hello: "Hello world"
-  
+
   # Navigation
   nav:
     home: "Home"
@@ -38,15 +38,15 @@ en:
     logout: "Logout"
     login: "Login"
     sign_up: "Sign up"
-  
+
   # Trip planning
-    
+
   # Chat interface
   chat:
     placeholder: "Tell me about your trip..."
     send: "Send"
     ai_thinking: "Thinking..."
-    
+
   # Chat sessions
   chat_sessions:
     title: "Trip Planning Chat"
@@ -57,7 +57,7 @@ en:
     you: "You"
     assistant: "Tripyo AI"
     create_error: "Failed to create chat session"
-    
+
   # Authentication
   auth:
     sign_in: "Sign in"
@@ -70,7 +70,7 @@ en:
     forgot_password: "Forgot your password?"
     first_name: "First name"
     last_name: "Last name"
-    
+
   # Common actions
   actions:
     save: "Save"
@@ -86,7 +86,7 @@ en:
     close: "Close"
     send: "Send"
     export: "Export"
-    
+
   # Home page
   home:
     good_morning: "Good morning"
@@ -107,7 +107,7 @@ en:
       export:
         title: "Export & Offline"
         description: "Download your travel guides as PDFs for offline access during your trip."
-  
+
   # Trip helpers
   trips:
     new: "New trip"
@@ -186,7 +186,7 @@ en:
     enter_email: "Enter email address"
     share_social: "Share on Social Media"
     access_denied: "Access denied"
-  
+
   # Messages
   messages:
     welcome: "Welcome to Tripyo!"

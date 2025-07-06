@@ -17,7 +17,7 @@ export default class extends Controller {
 
   handleSubmit(event) {
     event.preventDefault()
-    
+
     const content = this.inputTarget.value.trim()
     if (!content) return
 
@@ -37,7 +37,7 @@ export default class extends Controller {
     // Manually submit the form with the captured content
     const formData = new FormData(this.element)
     formData.set('content', content)
-    
+
     fetch(this.element.action, {
       method: 'POST',
       body: formData,
@@ -51,12 +51,12 @@ export default class extends Controller {
       const parser = new DOMParser()
       const doc = parser.parseFromString(html, 'text/html')
       const turboStreams = doc.querySelectorAll('turbo-stream')
-      
+
       turboStreams.forEach(stream => {
         const action = stream.getAttribute('action')
         const targetId = stream.getAttribute('target')
         const template = stream.querySelector('template')
-        
+
         if (targetId && template) {
           const targetElement = document.getElementById(targetId)
           if (targetElement) {
@@ -68,30 +68,30 @@ export default class extends Controller {
           }
         }
       })
-      
+
       // Hide typing indicator
       this.hideTypingIndicator()
-      
+
       // Re-enable form
       this.submitButtonTarget.disabled = false
       this.submitButtonTarget.innerHTML = '<i class="bi bi-send"></i>'
-      
+
       // Focus back on input
       this.inputTarget.focus()
-      
+
       // Scroll to bottom
       this.scrollToBottom()
     })
     .catch(error => {
       console.error('Error submitting message:', error)
-      
+
       // Hide typing indicator
       this.hideTypingIndicator()
-      
+
       // Re-enable form
       this.submitButtonTarget.disabled = false
       this.submitButtonTarget.innerHTML = '<i class="bi bi-send"></i>'
-      
+
       // Show error message
       alert('Error sending message. Please try again.')
     })
@@ -149,4 +149,4 @@ export default class extends Controller {
     this.inputTarget.value = ''
     this.inputTarget.focus()
   }
-} 
+}

@@ -29,11 +29,11 @@
                   <div class="btn-group w-100" role="group">
                     <%= link_to t('actions.view'), trip_path(trip), class: "btn btn-outline-primary btn-sm" %>
                     <%= link_to t('actions.edit'), edit_trip_path(trip), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= link_to t('actions.delete'), trip_path(trip), method: :delete, 
-                        class: "btn btn-outline-danger btn-sm", 
-                        data: { 
+                    <%= link_to t('actions.delete'), trip_path(trip), method: :delete,
+                        class: "btn btn-outline-danger btn-sm",
+                        data: {
                           confirm: t('trips.confirm_delete', name: trip.name),
-                          turbo_method: :delete 
+                          turbo_method: :delete
                         } %>
                   </div>
                 </div>

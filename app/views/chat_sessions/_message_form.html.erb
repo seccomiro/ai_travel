@@ -1,12 +1,12 @@
 <div id="message-form">
-  <%= form_with url: create_message_trip_chat_session_path(@trip, chat_session), 
-                method: :post, 
+  <%= form_with url: create_message_trip_chat_session_path(@trip, chat_session),
+                method: :post,
                 local: false,
-                data: { 
+                data: {
                   controller: "chat-form",
                   action: "submit->chat-form#handleSubmit"
                 } do |form| %>
-    
+
     <% if local_assigns[:error].present? %>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <%= error %>
@@ -15,11 +15,11 @@
     <% end %>
 
     <div class="input-group">
-      <%= form.text_area :content, 
-                        class: "form-control", 
+      <%= form.text_area :content,
+                        class: "form-control",
                         placeholder: t('chat_sessions.message_placeholder'),
                         rows: 2,
-                        data: { 
+                        data: {
                           action: "keydown->chat-form#handleKeydown",
                           chat_form_target: "input"
                         } %>
@@ -57,4 +57,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
