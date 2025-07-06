@@ -21,14 +21,14 @@ module TripsHelper
   # Returns the trip duration in days
   def trip_duration_in_days(start_date, end_date)
     return '-' unless start_date && end_date
-    
+
     (end_date - start_date).to_i + 1
   end
 
   # Returns formatted date range for a trip
   def trip_date_range(start_date, end_date)
     return t('trips.dates_not_set') unless start_date || end_date
-    
+
     if start_date && end_date
       if start_date == end_date
         l(start_date, format: :long)
@@ -45,23 +45,23 @@ module TripsHelper
   # Returns truncated description with fallback
   def trip_description_summary(description, length: 100)
     return t('trips.no_description') if description.blank?
-    
+
     truncate(description, length: length)
   end
 
   # Returns formatted trip status with icon
   def trip_status_with_icon(status)
     icon_class = case status.to_s
-                 when 'active'
+    when 'active'
                    'bi-play-circle'
-                 when 'planning'
+    when 'planning'
                    'bi-pencil-square'
-                 when 'completed'
+    when 'completed'
                    'bi-check-circle'
-                 else
+    else
                    'bi-circle'
-                 end
-    
+    end
+
     content_tag(:span, class: 'text-nowrap') do
       content_tag(:i, '', class: icon_class) + ' ' + t("trips.status.#{status}")
     end

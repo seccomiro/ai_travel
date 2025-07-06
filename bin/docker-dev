@@ -10,7 +10,7 @@ export COMPOSE_PROJECT_NAME=tripyo
 case "$1" in
   "setup")
     echo "🚀 Setting up Docker development environment..."
-    
+
     # Stop any running local PostgreSQL to avoid port conflicts
     echo "📊 Checking for local PostgreSQL conflicts..."
     if lsof -i :5432 >/dev/null 2>&1; then
@@ -18,67 +18,67 @@ case "$1" in
       echo "   brew services stop postgresql"
       echo "   or adjust the port in docker-compose.yml"
     fi
-    
+
     # Build and start containers
     docker compose build
     docker compose up -d postgres postgres_test redis
-    
+
     # Wait for PostgreSQL to be ready
     echo "⏳ Waiting for PostgreSQL to be ready..."
     sleep 10
-    
+
     # Setup database
     docker compose run --rm web bin/rails db:create db:migrate
     docker compose run --rm -e RAILS_ENV=test web bin/rails db:create db:migrate
-    
+
     echo "✅ Docker development environment is ready!"
     echo "   Run: bin/docker-dev start"
     ;;
-    
+
   "start")
     echo "🚀 Starting Docker development environment..."
     docker compose up
     ;;
-    
+
   "stop")
     echo "🛑 Stopping Docker development environment..."
     docker compose down
     ;;
-    
+
   "restart")
     echo "🔄 Restarting Docker development environment..."
     docker compose down
     docker compose up
     ;;
-    
+
   "reset")
     echo "🗑️  Resetting Docker development environment..."
     docker compose down -v
     docker compose build --no-cache
     $0 setup
     ;;
-    
+
   "logs")
     docker compose logs -f "${2:-web}"
     ;;
-    
+
   "shell")
     echo "🐚 Opening shell in Docker container..."
     docker compose run --rm web bash
     ;;
-    
+
   "rails")
     shift
     echo "🚂 Running Rails command: $*"
     docker compose run --rm web bin/rails "$@"
     ;;
-    
+
   "bundle")
     shift
     echo "📦 Running Bundle command: $*"
     docker compose run --rm web bundle "$@"
     ;;
-    
+
   "test")
     echo "🧪 Running tests in Docker..."
     # Ensure test database is ready
@@ -90,13 +90,13 @@ case "$1" in
       docker compose run --rm -e RAILS_ENV=test web bundle exec rspec
     fi
     ;;
-    
+
   "local")
     echo "🏠 Switching back to local development..."
     docker compose down
     echo "✅ Docker stopped. You can now use: bin/dev"
     ;;
-    
+
   *)
     echo "🐳 Tripyo Docker Development Helper"
     echo ""
@@ -123,4 +123,4 @@ case "$1" in
     echo "  bin/docker-dev bundle install  # Install gems (no services needed)"
     echo "  bin/docker-dev local     # Back to local dev"
     ;;
-esac 
+esac

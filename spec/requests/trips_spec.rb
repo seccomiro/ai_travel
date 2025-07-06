@@ -48,18 +48,18 @@ RSpec.describe "Trips", type: :request do
   describe "POST /trips" do
     it "creates a new trip with valid params" do
       trip_params = { trip: { name: "Test Trip", description: "A test trip" } }
-      
+
       expect {
         post trips_path, params: trip_params
       }.to change(Trip, :count).by(1)
-      
+
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(trip_path(Trip.last, locale: :en))
     end
 
     it "renders new template with invalid params" do
       trip_params = { trip: { name: "", description: "Invalid trip" } }
-      
+
       post trips_path, params: trip_params
       expect(response).to have_http_status(:unprocessable_entity)
     end
@@ -80,18 +80,18 @@ RSpec.describe "Trips", type: :request do
   describe "PATCH /trips/:id" do
     it "updates the trip with valid params" do
       trip_params = { trip: { name: "Updated Trip" } }
-      
+
       patch trip_path(trip), params: trip_params
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(trip_path(trip, locale: :en))
-      
+
       trip.reload
       expect(trip.name).to eq("Updated Trip")
     end
 
     it "renders edit template with invalid params" do
       trip_params = { trip: { name: "" } }
-      
+
       patch trip_path(trip), params: trip_params
       expect(response).to have_http_status(:unprocessable_entity)
     end
@@ -100,11 +100,11 @@ RSpec.describe "Trips", type: :request do
   describe "DELETE /trips/:id" do
     it "deletes the trip" do
       trip # Create the trip first
-      
+
       expect {
         delete trip_path(trip)
       }.to change(Trip, :count).by(-1)
-      
+
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(trips_path(locale: :en))
     end
@@ -136,4 +136,3 @@ RSpec.describe "Trips", type: :request do
     end
   end
 end
-

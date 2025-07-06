@@ -119,7 +119,7 @@ RSpec.describe HomeHelper, type: :helper do
 
     it 'returns platform statistics' do
       stats = helper.platform_stats
-      
+
       expect(stats[:total_trips]).to eq(3)
       expect(stats[:active_trips]).to eq(2)
       expect(stats[:total_users]).to eq(2)
@@ -129,14 +129,14 @@ RSpec.describe HomeHelper, type: :helper do
     it 'includes recent trips in monthly count' do
       old_trip = create(:trip, user: user1, created_at: 2.months.ago)
       stats = helper.platform_stats
-      
+
       expect(stats[:this_month_trips]).to eq(3) # Only recent trips
     end
   end
 
   describe '#recent_public_trips' do
     let!(:user) { create(:user) }
-    
+
     before do
       # Clean up any existing trips from previous tests
       Trip.destroy_all
@@ -146,7 +146,7 @@ RSpec.describe HomeHelper, type: :helper do
       public_trip1 = create(:trip, user: user, is_public: true)
       public_trip2 = create(:trip, user: user, is_public: true)
       private_trip = create(:trip, user: user, is_public: false)
-      
+
       trips = helper.recent_public_trips
       expect(trips.count).to eq(2)
       expect(trips).to include(public_trip1, public_trip2)
@@ -158,7 +158,7 @@ RSpec.describe HomeHelper, type: :helper do
       create(:trip, user: user, is_public: true)
       create(:trip, user: user, is_public: true)
       create(:trip, user: user, is_public: true)
-      
+
       trips = helper.recent_public_trips(1)
       expect(trips.count).to eq(1)
     end
@@ -167,10 +167,10 @@ RSpec.describe HomeHelper, type: :helper do
       # Create trips with explicitly different timestamps
       older_trip = create(:trip, user: user, is_public: true)
       older_trip.update_column(:created_at, 1.day.ago)
-      
+
       newer_trip = create(:trip, user: user, is_public: true)
       newer_trip.update_column(:created_at, 1.hour.ago)
-      
+
       trips = helper.recent_public_trips
       expect(trips.first).to eq(newer_trip)
     end
