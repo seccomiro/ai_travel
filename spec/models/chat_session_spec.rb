@@ -13,13 +13,13 @@ RSpec.describe ChatSession, type: :model do
     it 'is invalid without trip' do
       chat_session.trip = nil
       expect(chat_session).to_not be_valid
-      expect(chat_session.errors[:trip]).to include("must exist")
+      expect(chat_session.errors[:trip]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'is invalid without user' do
       chat_session.user = nil
       expect(chat_session).to_not be_valid
-      expect(chat_session.errors[:user]).to include("must exist")
+      expect(chat_session.errors[:user]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'is valid with valid statuses' do

@@ -14,25 +14,25 @@ RSpec.describe ChatMessage, type: :model do
     it 'is invalid without role' do
       chat_message.role = nil
       expect(chat_message).to_not be_valid
-      expect(chat_message.errors[:role]).to include("is not included in the list")
+      expect(chat_message.errors[:role]).to include(I18n.t('errors.messages.inclusion'))
     end
 
     it 'is invalid with invalid role' do
       chat_message.role = 'invalid_role'
       expect(chat_message).to_not be_valid
-      expect(chat_message.errors[:role]).to include("is not included in the list")
+      expect(chat_message.errors[:role]).to include(I18n.t('errors.messages.inclusion'))
     end
 
     it 'is invalid without content' do
       chat_message.content = nil
       expect(chat_message).to_not be_valid
-      expect(chat_message.errors[:content]).to include("can't be blank")
+      expect(chat_message.errors[:content]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'is invalid without chat_session' do
       chat_message.chat_session = nil
       expect(chat_message).to_not be_valid
-      expect(chat_message.errors[:chat_session]).to include("must exist")
+      expect(chat_message.errors[:chat_session]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'is valid with content too long' do
