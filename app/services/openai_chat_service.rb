@@ -17,11 +17,11 @@ class OpenaiChatService
     }
     params[:tools] = tools || default_tools if tools != false
     response = @client.chat(parameters: params)
-    if response.dig('choices', 0, 'message', 'content')
+    if response.dig('choices', 0, 'message', 'content') || response.dig('choices', 0, 'message', 'tool_calls')
       {
-        content: response['choices'][0]['message']['content'],
+        content: response.dig('choices', 0, 'message', 'content'),
         usage: response['usage'],
-        tool_calls: response['choices'][0]['message']['tool_calls'],
+        tool_calls: response.dig('choices', 0, 'message', 'tool_calls'),
       }
     else
       raise "OpenAI API error: #{response['error'] || response}"

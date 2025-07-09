@@ -32,7 +32,14 @@ class ChatResponseService
   def handle_tool_calls(ai_result, messages)
     tool_results = execute_tool_calls(ai_result[:tool_calls])
 
-    messages_with_tools = messages + tool_results
+    # Add the assistant message with tool calls to the history
+    assistant_message_with_tools = {
+      role: 'assistant',
+      content: nil,
+      tool_calls: ai_result[:tool_calls],
+    }
+
+    messages_with_tools = messages + [assistant_message_with_tools] + tool_results
     final_result = OpenaiChatService.new.chat(messages_with_tools, tools: false)
 
     if final_result && final_result[:content].present?

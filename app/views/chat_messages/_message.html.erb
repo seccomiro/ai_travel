@@ -34,10 +34,15 @@
           <!-- Tool results display -->
           <div class="tool-results mb-2">
             <% message.ai_tool_results.each do |tool_result| %>
+              <% tool_call = message.ai_tool_calls.find { |tc| tc['id'] == tool_result['tool_call_id'] } %>
               <div class="tool-result bg-success bg-opacity-10 p-2 rounded mb-1">
                 <small class="text-muted">
                   <i class="bi bi-check-circle"></i>
-                  <%= tool_result['function']['name'] %> completed
+                  <% if tool_call %>
+                    <%= tool_call.dig('function', 'name') %> completed
+                  <% else %>
+                    Tool completed
+                  <% end %>
                 </small>
               </div>
             <% end %>
