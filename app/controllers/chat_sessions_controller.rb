@@ -61,7 +61,7 @@ class ChatSessionsController < ApplicationController
   private
 
   def set_trip
-    @trip = Trip.find(params[:trip_id])
+    @trip = current_user.trips.find(params[:trip_id])
   end
 
   def set_chat_session

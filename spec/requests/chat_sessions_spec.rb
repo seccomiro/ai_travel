@@ -25,7 +25,7 @@ RSpec.describe 'ChatSessions', type: :request do
       other_session = create(:chat_session, user: other_trip.user, trip: other_trip)
 
       get trip_chat_session_path(other_trip, other_session)
-      expect(response).to redirect_to(trips_path + '?locale=en')
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -93,7 +93,7 @@ RSpec.describe 'ChatSessions', type: :request do
       post create_message_trip_chat_session_path(other_trip, other_session),
            params: valid_params,
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
-      expect(response).to redirect_to(trips_path + '?locale=en')
+      expect(response).to have_http_status(:not_found)
     end
   end
 end
