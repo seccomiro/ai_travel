@@ -53,35 +53,17 @@ RSpec.describe ChatMessage, type: :model do
     let!(:assistant_message) { create(:chat_message, chat_session: chat_session, role: 'assistant') }
     let!(:system_message) { create(:chat_message, chat_session: chat_session, role: 'system') }
 
-    describe '.by_role' do
+    describe 'role values' do
       it 'returns messages for specified role' do
-        expect(ChatMessage.by_role('user')).to match_array([user_message])
-        expect(ChatMessage.by_role('assistant')).to match_array([assistant_message])
-        expect(ChatMessage.by_role('system')).to match_array([system_message])
+        expect(ChatMessage.from_user).to match_array([user_message])
+        expect(ChatMessage.from_assistant).to match_array([assistant_message])
+        expect(ChatMessage.from_system).to match_array([system_message])
       end
     end
 
     describe '.recent' do
       it 'returns messages ordered by created_at desc' do
         expect(ChatMessage.recent).to eq([system_message, assistant_message, user_message])
-      end
-    end
-
-    describe '.user_messages' do
-      it 'returns only user messages' do
-        expect(ChatMessage.user_messages).to match_array([user_message])
-      end
-    end
-
-    describe '.assistant_messages' do
-      it 'returns only assistant messages' do
-        expect(ChatMessage.assistant_messages).to match_array([assistant_message])
-      end
-    end
-
-    describe '.system_messages' do
-      it 'returns only system messages' do
-        expect(ChatMessage.system_messages).to match_array([system_message])
       end
     end
   end
@@ -91,27 +73,27 @@ RSpec.describe ChatMessage, type: :model do
     let(:assistant_message) { create(:chat_message, chat_session: chat_session, role: 'assistant') }
     let(:system_message) { create(:chat_message, chat_session: chat_session, role: 'system') }
 
-    describe '#user_message?' do
+    describe '#from_user?' do
       it 'returns true for user messages' do
-        expect(user_message.user_message?).to be true
-        expect(assistant_message.user_message?).to be false
-        expect(system_message.user_message?).to be false
+        expect(user_message.from_user?).to be true
+        expect(assistant_message.from_user?).to be false
+        expect(system_message.from_user?).to be false
       end
     end
 
-    describe '#assistant_message?' do
+    describe '#from_assistant?' do
       it 'returns true for assistant messages' do
-        expect(user_message.assistant_message?).to be false
-        expect(assistant_message.assistant_message?).to be true
-        expect(system_message.assistant_message?).to be false
+        expect(user_message.from_assistant?).to be false
+        expect(assistant_message.from_assistant?).to be true
+        expect(system_message.from_assistant?).to be false
       end
     end
 
-    describe '#system_message?' do
+    describe '#from_system?' do
       it 'returns true for system messages' do
-        expect(user_message.system_message?).to be false
-        expect(assistant_message.system_message?).to be false
-        expect(system_message.system_message?).to be true
+        expect(user_message.from_system?).to be false
+        expect(assistant_message.from_system?).to be false
+        expect(system_message.from_system?).to be true
       end
     end
 

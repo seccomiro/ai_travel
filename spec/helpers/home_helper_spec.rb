@@ -143,9 +143,9 @@ RSpec.describe HomeHelper, type: :helper do
     end
 
     it 'returns only public trips' do
-      public_trip1 = create(:trip, user: user, is_public: true)
-      public_trip2 = create(:trip, user: user, is_public: true)
-      private_trip = create(:trip, user: user, is_public: false)
+      public_trip1 = create(:trip, user: user, public_trip: true)
+      public_trip2 = create(:trip, user: user, public_trip: true)
+      private_trip = create(:trip, user: user, public_trip: false)
 
       trips = helper.recent_public_trips
       expect(trips.count).to eq(2)
@@ -154,10 +154,10 @@ RSpec.describe HomeHelper, type: :helper do
     end
 
     it 'respects the limit parameter' do
-      create(:trip, user: user, is_public: true)
-      create(:trip, user: user, is_public: true)
-      create(:trip, user: user, is_public: true)
-      create(:trip, user: user, is_public: true)
+      create(:trip, user: user, public_trip: true)
+      create(:trip, user: user, public_trip: true)
+      create(:trip, user: user, public_trip: true)
+      create(:trip, user: user, public_trip: true)
 
       trips = helper.recent_public_trips(1)
       expect(trips.count).to eq(1)
@@ -165,10 +165,10 @@ RSpec.describe HomeHelper, type: :helper do
 
     it 'orders by recent first' do
       # Create trips with explicitly different timestamps
-      older_trip = create(:trip, user: user, is_public: true)
+      older_trip = create(:trip, user: user, public_trip: true)
       older_trip.update_column(:created_at, 1.day.ago)
 
-      newer_trip = create(:trip, user: user, is_public: true)
+      newer_trip = create(:trip, user: user, public_trip: true)
       newer_trip.update_column(:created_at, 1.hour.ago)
 
       trips = helper.recent_public_trips

@@ -9,7 +9,7 @@ class ChatSessionsController < ApplicationController
   end
 
   def create
-    @chat_session = @trip.create_chat_session(current_user)
+    @chat_session = @trip.chat_sessions.create!
     redirect_to trip_chat_session_path(@trip, @chat_session)
   rescue => e
     Rails.logger.error("Failed to create chat session: #{e.message}")

@@ -30,7 +30,7 @@
         </div>
         <div class="mb-3">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="isPublic" <%= 'checked' if trip.is_public %>>
+            <input class="form-check-input" type="checkbox" id="isPublic" <%= 'checked' if trip.public_trip? %>>
             <label class="form-check-label" for="isPublic">
               <%= t('trips.make_public') %>
             </label>

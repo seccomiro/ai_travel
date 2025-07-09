@@ -123,7 +123,7 @@ module ChatSessionsHelper
     return 'New conversation' if chat_session.message_count == 0
     
     # Try to get a meaningful summary from the first user message
-    first_user_message = chat_session.user_messages.order(:created_at).first
+    first_user_message = chat_session.chat_messages.from_user.order(:created_at).first
     return 'New conversation' if first_user_message.nil?
     
     content = first_user_message.content

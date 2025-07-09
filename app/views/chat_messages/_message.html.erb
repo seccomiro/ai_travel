@@ -1,13 +1,13 @@
-<div class="message mb-3 <%= message.user_message? ? 'user-message' : 'assistant-message' %>">
-  <div class="d-flex <%= message.user_message? ? 'justify-content-end' : 'justify-content-start' %>">
-    <div class="message-bubble <%= message.user_message? ? 'bg-primary text-white' : 'bg-light' %> p-3 rounded"
+<div class="message mb-3 <%= message.from_user? ? 'user-message' : 'assistant-message' %>">
+  <div class="d-flex <%= message.from_user? ? 'justify-content-end' : 'justify-content-start' %>">
+    <div class="message-bubble <%= message.from_user? ? 'bg-primary text-white' : 'bg-light' %> p-3 rounded"
          style="max-width: 70%;">
 
       <!-- Message Header -->
       <div class="message-header mb-2">
-        <small class="<%= message.user_message? ? 'text-white-50' : 'text-muted' %>">
-          <i class="bi <%= message.user_message? ? 'bi-person' : 'bi-robot' %>"></i>
-          <%= message.user_message? ? t('chat_sessions.you') : t('chat_sessions.assistant') %>
+        <small class="<%= message.from_user? ? 'text-white-50' : 'text-muted' %>">
+          <i class="bi <%= message.from_user? ? 'bi-person' : 'bi-robot' %>"></i>
+          <%= message.from_user? ? t('chat_sessions.you') : t('chat_sessions.assistant') %>
           <span class="ms-2">
             <%= l(message.created_at, format: :short) %>
           </span>
@@ -16,7 +16,7 @@
 
       <!-- Message Content -->
       <div class="message-content">
-        <% if message.assistant_message? && message.has_tool_calls? %>
+        <% if message.from_assistant? && message.has_tool_calls? %>
           <!-- Tool calls display -->
           <div class="tool-calls mb-2">
             <% message.ai_tool_calls.each do |tool_call| %>
@@ -30,7 +30,7 @@
           </div>
         <% end %>
 
-        <% if message.assistant_message? && message.has_tool_results? %>
+        <% if message.from_assistant? && message.has_tool_results? %>
           <!-- Tool results display -->
           <div class="tool-results mb-2">
             <% message.ai_tool_results.each do |tool_result| %>
@@ -51,9 +51,9 @@
       </div>
 
       <!-- Message Footer -->
-      <% if message.assistant_message? && message.metadata_value('processing_time') %>
+      <% if message.from_assistant? && message.metadata_value('processing_time') %>
         <div class="message-footer mt-2">
-          <small class="<%= message.user_message? ? 'text-white-50' : 'text-muted' %>">
+          <small class="<%= message.from_user? ? 'text-white-50' : 'text-muted' %>">
             <i class="bi bi-clock"></i>
             <%= number_with_precision(message.metadata_value('processing_time'), precision: 2) %>s
           </small>
