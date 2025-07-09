@@ -24,9 +24,8 @@ module Tripyo
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Internationalization configuration
-    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
-    config.i18n.available_locales = [:en, :es]
+    # Set available languages
+    config.i18n.available_locales = [:en, :es, :pt]
     config.i18n.default_locale = :en
     config.i18n.fallbacks = [I18n.default_locale]
 

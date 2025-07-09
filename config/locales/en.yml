@@ -195,6 +195,12 @@ en:
     welcome: "Welcome to Tripyo!"
     trip_created: "Trip was successfully created."
     trip_updated: "Trip was successfully updated."
-    trip_deleted: "Trip deleted successfully"
+    trip_deleted: "Trip was successfully deleted."
   errors:
     trip_creation_failed: "Could not create a new trip. Please try again."
+  nav:
+    trips: "My Trips"
+    profile: "Profile"
+    logout: "Log Out"
+    login: "Log In"
+    sign_up: "Sign Up"

@@ -93,6 +93,12 @@ es:
   # Messages
   messages:
     welcome: "¡Bienvenido a Tripyo!"
-    trip_created: "Viaje creado exitosamente"
-    trip_updated: "Viaje actualizado exitosamente"
-    trip_deleted: "Viaje eliminado exitosamente"
+    trip_created: "Viaje creado con éxito."
+    trip_updated: "Viaje actualizado con éxito."
+    trip_deleted: "Viaje eliminado con éxito."
+  nav:
+    trips: "Mis Viajes"
+    profile: "Perfil"
+    logout: "Cerrar Sesión"
+    login: "Iniciar Sesión"
+    sign_up: "Registrarse"
