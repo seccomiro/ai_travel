@@ -22,6 +22,12 @@ RSpec.describe OpenaiChatService, type: :service do
       },
     }
   end
+  let(:mock_tool_definitions) do
+    [
+      { type: 'function', function: { name: 'get_weather', description: 'Get weather' } },
+      { type: 'function', function: { name: 'search_accommodation', description: 'Search accommodation' } },
+    ]
+  end
 
   describe '#initialize' do
     it 'initializes with OpenAI client' do
@@ -32,6 +38,7 @@ RSpec.describe OpenaiChatService, type: :service do
   describe '#chat' do
     before do
       allow(mock_client).to receive(:chat).and_return(mock_response)
+      allow(AIToolsRegistry).to receive(:definitions).and_return(mock_tool_definitions)
     end
 
     it 'calls OpenAI API with correct parameters' do
@@ -40,7 +47,7 @@ RSpec.describe OpenaiChatService, type: :service do
           model: 'gpt-4o',
           messages: messages,
           temperature: 0.7,
-          tools: kind_of(Array),
+          tools: mock_tool_definitions,
         }
       ).and_return(mock_response)
 
