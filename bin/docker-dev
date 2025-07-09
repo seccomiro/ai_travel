@@ -76,19 +76,16 @@ case "$1" in
   "bundle")
     shift
     echo "📦 Running Bundle command: $*"
-    docker compose run --rm web bundle "$@"
+    docker compose run --rm -u root web bundle "$@"
     ;;
 
   "test")
+    shift
     echo "🧪 Running tests in Docker..."
     # Ensure test database is ready
     docker compose run --rm -e RAILS_ENV=test web bin/rails db:migrate 2>/dev/null || true
     # Run tests in a temporary container
-    if [ -n "$2" ]; then
-      docker compose run --rm -e RAILS_ENV=test web bundle exec rspec "$2"
-    else
-      docker compose run --rm -e RAILS_ENV=test web bundle exec rspec
-    fi
+    docker compose run --rm -e RAILS_ENV=test web bundle exec rspec "$@"
     ;;
 
   "local")

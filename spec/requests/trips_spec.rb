@@ -15,9 +15,9 @@ RSpec.describe "Trips", type: :request do
     end
 
     it "displays user's trips" do
-      trip # Create the trip
+      trip
       get trips_path
-      expect(response.body).to include(trip.name)
+      expect(response.body).to include(trip.title)
     end
   end
 
@@ -29,39 +29,18 @@ RSpec.describe "Trips", type: :request do
 
     it "displays trip details" do
       get trip_path(trip)
-      expect(response.body).to include(trip.name)
-    end
-  end
-
-  describe "GET /trips/new" do
-    it "returns http success" do
-      get new_trip_path
-      expect(response).to have_http_status(:success)
-    end
-
-    it "displays the new trip form" do
-      get new_trip_path
-      expect(response.body).to include("New Trip")
+      expect(response.body).to include(trip.title)
     end
   end
 
   describe "POST /trips" do
-    it "creates a new trip with valid params" do
-      trip_params = { trip: { name: "Test Trip", description: "A test trip" } }
-
+    it "creates a new trip and redirects to chat" do
       expect {
-        post trips_path, params: trip_params
+        post trips_path
       }.to change(Trip, :count).by(1)
 
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trip_path(Trip.last, locale: :en))
-    end
-
-    it "renders new template with invalid params" do
-      trip_params = { trip: { name: "", description: "Invalid trip" } }
-
-      post trips_path, params: trip_params
-      expect(response).to have_http_status(:unprocessable_entity)
+      new_trip = Trip.last
+      expect(response).to redirect_to(trip_chat_session_path(new_trip, new_trip.chat_sessions.first, locale: I18n.default_locale.to_s))
     end
   end
 
@@ -79,34 +58,25 @@ RSpec.describe "Trips", type: :request do
 
   describe "PATCH /trips/:id" do
     it "updates the trip with valid params" do
-      trip_params = { trip: { name: "Updated Trip" } }
-
-      patch trip_path(trip), params: trip_params
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trip_path(trip, locale: :en))
-
+      patch trip_path(trip), params: { trip: { title: "Updated Trip" } }
       trip.reload
-      expect(trip.name).to eq("Updated Trip")
+      expect(trip.title).to eq("Updated Trip")
+      expect(response).to redirect_to(trip_path(trip, locale: I18n.default_locale.to_s))
     end
 
     it "renders edit template with invalid params" do
-      trip_params = { trip: { name: "" } }
-
-      patch trip_path(trip), params: trip_params
+      patch trip_path(trip), params: { trip: { title: "" } }
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
   describe "DELETE /trips/:id" do
     it "deletes the trip" do
-      trip # Create the trip first
-
+      trip
       expect {
         delete trip_path(trip)
       }.to change(Trip, :count).by(-1)
-
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trips_path(locale: :en))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
     end
   end
 
@@ -117,13 +87,13 @@ RSpec.describe "Trips", type: :request do
     it "redirects when trying to access another user's trip" do
       get trip_path(other_trip)
       expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trips_path(locale: :en))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
     end
 
     it "redirects when trying to edit another user's trip" do
       get edit_trip_path(other_trip)
       expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trips_path(locale: :en))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
     end
   end
 
@@ -131,7 +101,6 @@ RSpec.describe "Trips", type: :request do
     it "redirects to sign in page" do
       sign_out user
       get trips_path
-      expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)
     end
   end

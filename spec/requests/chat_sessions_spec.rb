@@ -48,6 +48,7 @@ RSpec.describe 'ChatSessions', type: :request do
   end
 
   describe 'POST /trips/:trip_id/chat_sessions/:id/create_message' do
+    include_context "with OpenAI API stub"
     let(:valid_params) { { content: 'Hello AI!' } }
 
     it 'creates a new message' do
@@ -65,10 +66,12 @@ RSpec.describe 'ChatSessions', type: :request do
            params: valid_params,
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
-      user_message = ChatMessage.order(:created_at).first
+      user_message = ChatMessage.where(role: 'user').last
       expect(user_message.chat_session).to eq(chat_session)
-      expect(user_message.role).to eq('user')
       expect(user_message.content).to eq('Hello AI!')
+
+      assistant_message = ChatMessage.where(role: 'assistant').last
+      expect(assistant_message.content).to include("Hello there!")
     end
 
     it 'returns error for invalid message' do
