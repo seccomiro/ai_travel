@@ -29,7 +29,7 @@ RSpec.describe ChatSession, type: :model do
       expect(described_class.statuses).to eq({
         'active' => 'active',
         'completed' => 'completed',
-        'archived' => 'archived'
+        'archived' => 'archived',
       })
     end
   end
@@ -67,7 +67,7 @@ RSpec.describe ChatSession, type: :model do
       it 'returns sessions for specified trip' do
         other_trip = create(:trip, user: user)
         other_session = create(:chat_session, trip: other_trip)
-        
+
         expect(ChatSession.by_trip(trip)).to match_array([active_session, completed_session, archived_session])
         expect(ChatSession.by_trip(other_trip)).to eq([other_session])
       end
@@ -78,7 +78,7 @@ RSpec.describe ChatSession, type: :model do
         other_user = create(:user)
         other_trip = create(:trip, user: other_user)
         other_session = create(:chat_session, trip: other_trip)
-        
+
         expect(ChatSession.by_user(user)).to match_array([active_session, completed_session, archived_session])
         expect(ChatSession.by_user(other_user)).to eq([other_session])
       end
@@ -91,10 +91,10 @@ RSpec.describe ChatSession, type: :model do
     describe '#message_count' do
       it 'returns correct message count' do
         expect(chat_session.message_count).to eq(0)
-        
+
         create(:chat_message, chat_session: chat_session)
         expect(chat_session.message_count).to eq(1)
-        
+
         create(:chat_message, chat_session: chat_session)
         expect(chat_session.message_count).to eq(2)
       end
@@ -104,7 +104,7 @@ RSpec.describe ChatSession, type: :model do
       it 'returns the most recent message' do
         first_message = create(:chat_message, chat_session: chat_session, created_at: 1.hour.ago)
         last_message = create(:chat_message, chat_session: chat_session, created_at: Time.current)
-        
+
         expect(chat_session.last_message).to eq(last_message)
       end
 
@@ -124,11 +124,11 @@ RSpec.describe ChatSession, type: :model do
       it 'returns conversation history as array of role-content pairs' do
         create(:chat_message, chat_session: chat_session, role: 'user', content: 'Hello')
         create(:chat_message, chat_session: chat_session, role: 'assistant', content: 'Hi there!')
-        
+
         history = chat_session.conversation_history
         expect(history).to eq([
           ['user', 'Hello'],
-          ['assistant', 'Hi there!']
+          ['assistant', 'Hi there!'],
         ])
       end
 
@@ -141,9 +141,9 @@ RSpec.describe ChatSession, type: :model do
       it 'returns conversation formatted for AI with system message' do
         create(:chat_message, chat_session: chat_session, role: 'user', content: 'Hello')
         create(:chat_message, chat_session: chat_session, role: 'assistant', content: 'Hi there!')
-        
+
         conversation = chat_session.conversation_for_ai
-        
+
         expect(conversation.length).to eq(3)
         expect(conversation.first[:role]).to eq('system')
         expect(conversation.first[:content]).to include('Tripyo')
@@ -155,7 +155,7 @@ RSpec.describe ChatSession, type: :model do
 
       it 'returns only system message when no conversation' do
         conversation = chat_session.conversation_for_ai
-        
+
         expect(conversation.length).to eq(1)
         expect(conversation.first[:role]).to eq('system')
         expect(conversation.first[:content]).to include('Tripyo')
@@ -163,4 +163,3 @@ RSpec.describe ChatSession, type: :model do
     end
   end
 end
-

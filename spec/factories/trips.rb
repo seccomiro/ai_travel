@@ -39,7 +39,7 @@ FactoryBot.define do
         {
           "destinations" => ["Paris", "London"],
           "budget" => 2000,
-          "transportation" => "plane"
+          "transportation" => "plane",
         }
       end
     end
@@ -48,7 +48,7 @@ FactoryBot.define do
       sharing_settings do
         {
           "allowed_users" => [],
-          "share_level" => "view"
+          "share_level" => "view",
         }
       end
     end

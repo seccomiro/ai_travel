@@ -23,7 +23,7 @@ RSpec.describe 'ChatSessions', type: :request do
     it 'redirects if user doesn\'t own the trip' do
       other_trip = create(:trip, user: create(:user))
       other_session = create(:chat_session, user: other_trip.user, trip: other_trip)
-      
+
       get trip_chat_session_path(other_trip, other_session)
       expect(response).to redirect_to(trips_path + '?locale=en')
     end
@@ -40,7 +40,7 @@ RSpec.describe 'ChatSessions', type: :request do
 
     it 'associates the session with the correct trip and user' do
       post trip_chat_sessions_path(trip)
-      
+
       new_session = ChatSession.last
       expect(new_session.trip).to eq(trip)
       expect(new_session.user).to eq(user)
@@ -52,8 +52,8 @@ RSpec.describe 'ChatSessions', type: :request do
 
     it 'creates a new message' do
       expect {
-        post create_message_trip_chat_session_path(trip, chat_session), 
-             params: valid_params, 
+        post create_message_trip_chat_session_path(trip, chat_session),
+             params: valid_params,
              headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
       }.to change(ChatMessage, :count).by(2) # user + assistant
 
@@ -61,10 +61,10 @@ RSpec.describe 'ChatSessions', type: :request do
     end
 
     it 'associates the message with the correct session' do
-      post create_message_trip_chat_session_path(trip, chat_session), 
-           params: valid_params, 
+      post create_message_trip_chat_session_path(trip, chat_session),
+           params: valid_params,
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
-      
+
       user_message = ChatMessage.order(:created_at).first
       expect(user_message.chat_session).to eq(chat_session)
       expect(user_message.role).to eq('user')
@@ -73,10 +73,10 @@ RSpec.describe 'ChatSessions', type: :request do
 
     it 'returns error for invalid message' do
       invalid_params = { content: '' }
-      
+
       expect {
-        post create_message_trip_chat_session_path(trip, chat_session), 
-             params: invalid_params, 
+        post create_message_trip_chat_session_path(trip, chat_session),
+             params: invalid_params,
              headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
       }.not_to change(ChatMessage, :count)
 
@@ -86,9 +86,9 @@ RSpec.describe 'ChatSessions', type: :request do
     it 'redirects if user doesn\'t own the trip' do
       other_trip = create(:trip, user: create(:user))
       other_session = create(:chat_session, user: other_trip.user, trip: other_trip)
-      
-      post create_message_trip_chat_session_path(other_trip, other_session), 
-           params: valid_params, 
+
+      post create_message_trip_chat_session_path(other_trip, other_session),
+           params: valid_params,
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
       expect(response).to redirect_to(trips_path + '?locale=en')
     end

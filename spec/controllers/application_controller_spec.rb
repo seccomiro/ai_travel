@@ -61,4 +61,4 @@ RSpec.describe ApplicationController, type: :controller do
       expect(controller.respond_to?(:configure_permitted_parameters, true)).to be true
     end
   end
-end 
+end

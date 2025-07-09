@@ -11,15 +11,15 @@ RSpec.describe OpenaiChatService, type: :service do
         {
           'message' => {
             'content' => 'Hello! How can I help you?',
-            'role' => 'assistant'
-          }
-        }
+            'role' => 'assistant',
+          },
+        },
       ],
       'usage' => {
         'prompt_tokens' => 10,
         'completion_tokens' => 20,
-        'total_tokens' => 30
-      }
+        'total_tokens' => 30,
+      },
     }
   end
 
@@ -40,7 +40,7 @@ RSpec.describe OpenaiChatService, type: :service do
           model: 'gpt-4o',
           messages: messages,
           temperature: 0.7,
-          tools: kind_of(Array)
+          tools: kind_of(Array),
         }
       ).and_return(mock_response)
 
@@ -49,21 +49,21 @@ RSpec.describe OpenaiChatService, type: :service do
 
     it 'returns the response from OpenAI' do
       result = service.chat(messages)
-      
+
       expect(result).to eq({
         content: 'Hello! How can I help you?',
         usage: {
           'prompt_tokens' => 10,
           'completion_tokens' => 20,
-          'total_tokens' => 30
+          'total_tokens' => 30,
         },
-        tool_calls: nil
+        tool_calls: nil,
       })
     end
 
     it 'handles functions when provided' do
       tools = [{ type: 'function', function: { name: 'test_tool' } }]
-      
+
       expect(mock_client).to receive(:chat).with(
         parameters: hash_including(tools: tools)
       ).and_return(mock_response)
@@ -79,24 +79,24 @@ RSpec.describe OpenaiChatService, type: :service do
           'type' => 'function',
           'function' => {
             'name' => 'get_weather',
-            'arguments' => '{"location": "Paris"}'
-          }
-        }
+            'arguments' => '{"location": "Paris"}',
+          },
+        },
       ]
 
       allow(mock_client).to receive(:chat).and_return(response_with_function)
 
       result = service.chat(messages)
-      
+
       expect(result[:tool_calls]).to eq([
         {
           'id' => 'call_123',
           'type' => 'function',
           'function' => {
             'name' => 'get_weather',
-            'arguments' => '{"location": "Paris"}'
-          }
-        }
+            'arguments' => '{"location": "Paris"}',
+          },
+        },
       ])
     end
   end
@@ -124,4 +124,4 @@ RSpec.describe OpenaiChatService, type: :service do
       end
     end
   end
-end 
+end

@@ -27,23 +27,23 @@ module HomeHelper
       {
         icon: 'bi-chat-dots',
         title: t('home.features.ai_planning.title'),
-        description: t('home.features.ai_planning.description')
+        description: t('home.features.ai_planning.description'),
       },
       {
         icon: 'bi-map',
         title: t('home.features.interactive_maps.title'),
-        description: t('home.features.interactive_maps.description')
+        description: t('home.features.interactive_maps.description'),
       },
       {
         icon: 'bi-people',
         title: t('home.features.collaboration.title'),
-        description: t('home.features.collaboration.description')
+        description: t('home.features.collaboration.description'),
       },
       {
         icon: 'bi-download',
         title: t('home.features.export.title'),
-        description: t('home.features.export.description')
-      }
+        description: t('home.features.export.description'),
+      },
     ]
   end
 
@@ -53,7 +53,7 @@ module HomeHelper
       total_trips: Trip.count,
       active_trips: Trip.active.count,
       total_users: User.count,
-      this_month_trips: Trip.where('created_at >= ?', 1.month.ago).count
+      this_month_trips: Trip.where('created_at >= ?', 1.month.ago).count,
     }
   end
 

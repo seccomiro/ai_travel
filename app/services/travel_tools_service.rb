@@ -23,7 +23,7 @@ class TravelToolsService
       condition: ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy'].sample,
       humidity: rand(40..80),
       wind_speed: rand(5..25),
-      note: 'This is mock weather data. Integrate with a real weather API for production.'
+      note: 'This is mock weather data. Integrate with a real weather API for production.',
     }
   end
 
@@ -46,24 +46,24 @@ class TravelToolsService
           type: 'Hotel',
           price_per_night: rand(100..300),
           rating: rand(3.5..5.0).round(1),
-          amenities: ['WiFi', 'Pool', 'Restaurant', 'Spa']
+          amenities: ['WiFi', 'Pool', 'Restaurant', 'Spa'],
         },
         {
           name: "Cozy #{location.split(',').first} Inn",
           type: 'Hotel',
           price_per_night: rand(80..150),
           rating: rand(3.0..4.5).round(1),
-          amenities: ['WiFi', 'Breakfast', 'Parking']
+          amenities: ['WiFi', 'Breakfast', 'Parking'],
         },
         {
           name: "#{location.split(',').first} Central Apartment",
           type: 'Apartment',
           price_per_night: rand(120..250),
           rating: rand(4.0..5.0).round(1),
-          amenities: ['WiFi', 'Kitchen', 'Washing Machine', 'Balcony']
-        }
+          amenities: ['WiFi', 'Kitchen', 'Washing Machine', 'Balcony'],
+        },
       ],
-      note: 'This is mock accommodation data. Integrate with real booking APIs for production.'
+      note: 'This is mock accommodation data. Integrate with real booking APIs for production.',
     }
   end
 
@@ -93,13 +93,13 @@ class TravelToolsService
                            rand(100..500)
                           when 'bus'
                            rand(15..80)
-                          end
+                          end,
         }
       end,
       total_distance: rand(200..2000),
       total_duration: rand(5..24),
       total_cost: rand(100..800),
-      note: 'This is mock routing data. Integrate with Google Maps or similar for production.'
+      note: 'This is mock routing data. Integrate with Google Maps or similar for production.',
     }
   end
 end

@@ -36,7 +36,7 @@ class ChatSessionsController < ApplicationController
             # Reset the form
             turbo_stream.update('message-form', partial: 'chat_sessions/message_form', locals: { chat_session: @chat_session }),
             # Update trip sidebar
-            turbo_stream.update('trip-sidebar', partial: 'trips/sidebar_content', locals: { trip: @trip })
+            turbo_stream.update('trip-sidebar', partial: 'trips/sidebar_content', locals: { trip: @trip }),
           ]
         end
         format.html { redirect_to trip_chat_session_path(@trip, @chat_session) }
@@ -50,7 +50,7 @@ class ChatSessionsController < ApplicationController
             # Show error in form
             turbo_stream.update('message-form',
               partial: 'chat_sessions/message_form',
-              locals: { chat_session: @chat_session, error: @message.errors.full_messages.join(', ') })
+              locals: { chat_session: @chat_session, error: @message.errors.full_messages.join(', ') }),
           ]
         end
         format.html { redirect_to trip_chat_session_path(@trip, @chat_session), alert: @message.errors.full_messages.join(', ') }
@@ -93,7 +93,7 @@ class ChatSessionsController < ApplicationController
             tool_call_id: tool_call['id'],
             role: 'tool',
             name: tool_name,
-            content: result.to_json
+            content: result.to_json,
           }
         end
 
@@ -109,7 +109,7 @@ class ChatSessionsController < ApplicationController
               usage: final_result[:usage],
               tool_calls: ai_result[:tool_calls],
               tool_results: tool_results,
-              model: OpenaiChatService::DEFAULT_MODEL
+              model: OpenaiChatService::DEFAULT_MODEL,
             }
           )
         else
@@ -122,7 +122,7 @@ class ChatSessionsController < ApplicationController
           content: ai_result[:content],
           metadata: {
             usage: ai_result[:usage],
-            model: OpenaiChatService::DEFAULT_MODEL
+            model: OpenaiChatService::DEFAULT_MODEL,
           }
         )
       end
@@ -184,7 +184,7 @@ class ChatSessionsController < ApplicationController
     # Common city patterns
     city_patterns = [
       /\b(?:visit|going to|travel to|planning to go to)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
-      /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:in|to|for)\s+(?:my\s+)?trip/i
+      /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:in|to|for)\s+(?:my\s+)?trip/i,
     ]
 
     city_patterns.each do |pattern|
@@ -203,7 +203,7 @@ class ChatSessionsController < ApplicationController
     date_patterns = [
       /\b(?:in|on|from|to)\s+(\w+\s+\d{1,2},?\s+\d{4})/i,
       /\b(\d{1,2}\/\d{1,2}\/\d{4})/,
-      /\b(\d{4}-\d{2}-\d{2})/
+      /\b(\d{4}-\d{2}-\d{2})/,
     ]
 
     date_patterns.each do |pattern|

@@ -13,7 +13,7 @@ class OpenaiChatService
     params = {
       model: model,
       messages: messages,
-      temperature: temperature
+      temperature: temperature,
     }
     params[:tools] = tools || default_tools if tools != false
     response = @client.chat(parameters: params)
@@ -21,7 +21,7 @@ class OpenaiChatService
       {
         content: response['choices'][0]['message']['content'],
         usage: response['usage'],
-        tool_calls: response['choices'][0]['message']['tool_calls']
+        tool_calls: response['choices'][0]['message']['tool_calls'],
       }
     else
       raise "OpenAI API error: #{response['error'] || response}"
@@ -42,12 +42,12 @@ class OpenaiChatService
             properties: {
               location: {
                 type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')"
-              }
+                description: "The city and country name (e.g., 'Paris, France')",
+              },
             },
-            required: ['location']
-          }
-        }
+            required: ['location'],
+          },
+        },
       },
       {
         type: 'function',
@@ -59,24 +59,24 @@ class OpenaiChatService
             properties: {
               location: {
                 type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')"
+                description: "The city and country name (e.g., 'Paris, France')",
               },
               check_in: {
                 type: 'string',
-                description: 'Check-in date in YYYY-MM-DD format'
+                description: 'Check-in date in YYYY-MM-DD format',
               },
               check_out: {
                 type: 'string',
-                description: 'Check-out date in YYYY-MM-DD format'
+                description: 'Check-out date in YYYY-MM-DD format',
               },
               guests: {
                 type: 'integer',
-                description: 'Number of guests'
-              }
+                description: 'Number of guests',
+              },
             },
-            required: ['location']
-          }
-        }
+            required: ['location'],
+          },
+        },
       },
       {
         type: 'function',
@@ -89,20 +89,20 @@ class OpenaiChatService
               destinations: {
                 type: 'array',
                 items: {
-                  type: 'string'
+                  type: 'string',
                 },
-                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])"
+                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])",
               },
               transport_mode: {
                 type: 'string',
                 enum: ['car', 'train', 'plane', 'bus'],
-                description: 'Preferred mode of transportation'
-              }
+                description: 'Preferred mode of transportation',
+              },
             },
-            required: ['destinations']
-          }
-        }
-      }
+            required: ['destinations'],
+          },
+        },
+      },
     ]
   end
 end

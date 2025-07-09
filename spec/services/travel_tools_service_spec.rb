@@ -7,7 +7,7 @@ RSpec.describe TravelToolsService, type: :service do
     it 'calls get_weather when tool name is get_weather' do
       args = { 'location' => 'Paris' }
       result = service.call_tool('get_weather', args)
-      
+
       expect(result).to include(:location)
       expect(result[:location]).to eq('Paris')
       expect(result).to include(:temperature)
@@ -17,7 +17,7 @@ RSpec.describe TravelToolsService, type: :service do
     it 'calls search_accommodation when tool name is search_accommodation' do
       args = { 'location' => 'Paris', 'check_in' => '2025-08-01', 'check_out' => '2025-08-05' }
       result = service.call_tool('search_accommodation', args)
-      
+
       expect(result).to include(:location)
       expect(result[:location]).to eq('Paris')
       expect(result).to include(:options)
@@ -27,7 +27,7 @@ RSpec.describe TravelToolsService, type: :service do
     it 'calls plan_route when tool name is plan_route' do
       args = { 'destinations' => ['Paris', 'London'] }
       result = service.call_tool('plan_route', args)
-      
+
       expect(result).to include(:destinations)
       expect(result[:destinations]).to eq(['Paris', 'London'])
       expect(result).to include(:route)
@@ -45,7 +45,7 @@ RSpec.describe TravelToolsService, type: :service do
 
     it 'returns weather information for the location' do
       result = service.send(:get_weather, 'Paris')
-      
+
       expect(result).to include(:location)
       expect(result[:location]).to eq('Paris')
       expect(result).to include(:temperature)
@@ -77,13 +77,13 @@ RSpec.describe TravelToolsService, type: :service do
         'location' => 'Paris',
         'check_in' => '2025-08-01',
         'check_out' => '2025-08-05',
-        'guests' => 2
+        'guests' => 2,
       }
     end
 
     it 'returns accommodation options for the location' do
       result = service.send(:search_accommodation, args)
-      
+
       expect(result).to include(:location)
       expect(result[:location]).to eq('Paris')
       expect(result).to include(:check_in)
@@ -128,13 +128,13 @@ RSpec.describe TravelToolsService, type: :service do
     let(:args) do
       {
         'destinations' => ['Paris', 'London'],
-        'transport_mode' => 'train'
+        'transport_mode' => 'train',
       }
     end
 
     it 'returns route planning information' do
       result = service.send(:plan_route, args)
-      
+
       expect(result).to include(:destinations)
       expect(result).to include(:transport_mode)
       expect(result).to include(:route)
@@ -152,7 +152,7 @@ RSpec.describe TravelToolsService, type: :service do
     it 'includes segment details' do
       result = service.send(:plan_route, args)
       segment = result[:route].first
-      
+
       expect(segment).to include(:segment)
       expect(segment).to include(:from)
       expect(segment).to include(:to)
@@ -217,4 +217,4 @@ RSpec.describe TravelToolsService, type: :service do
       expect(route_result).to be_a(Hash)
     end
   end
-end 
+end

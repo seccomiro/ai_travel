@@ -17,4 +17,4 @@ RSpec.describe ApplicationMailer, type: :mailer do
     mailer = ApplicationMailer.new
     expect(mailer).to be_an_instance_of(ApplicationMailer)
   end
-end 
+end

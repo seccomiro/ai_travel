@@ -15,4 +15,4 @@ RSpec.describe ApplicationJob, type: :job do
     job = ApplicationJob.new
     expect(job).to be_an_instance_of(ApplicationJob)
   end
-end 
+end

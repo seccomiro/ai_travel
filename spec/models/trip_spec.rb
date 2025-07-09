@@ -179,7 +179,7 @@ RSpec.describe Trip, type: :model do
 
         expect(trip.trip_data).to eq({
           'existing' => 'value',
-          'new_key' => 'new_value'
+          'new_key' => 'new_value',
         })
       end
 
@@ -202,13 +202,13 @@ RSpec.describe Trip, type: :model do
       it 'returns the first active chat session' do
         active_session = create(:chat_session, trip: trip, status: 'active')
         create(:chat_session, trip: trip, status: 'completed')
-        
+
         expect(trip.active_chat_session).to eq(active_session)
       end
 
       it 'returns nil when no active chat sessions' do
         create(:chat_session, trip: trip, status: 'completed')
-        
+
         expect(trip.active_chat_session).to be_nil
       end
     end
@@ -216,13 +216,13 @@ RSpec.describe Trip, type: :model do
     describe '#has_active_chat_session?' do
       it 'returns true when trip has active chat session' do
         create(:chat_session, trip: trip, status: 'active')
-        
+
         expect(trip.has_active_chat_session?).to be true
       end
 
       it 'returns false when trip has no active chat session' do
         create(:chat_session, trip: trip, status: 'completed')
-        
+
         expect(trip.has_active_chat_session?).to be false
       end
     end

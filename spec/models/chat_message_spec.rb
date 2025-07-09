@@ -185,4 +185,3 @@ RSpec.describe ChatMessage, type: :model do
     end
   end
 end
-

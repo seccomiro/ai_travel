@@ -53,19 +53,19 @@ module ChatSessionsHelper
 
   def format_message_time(message)
     return '' if message.created_at.nil?
-    
+
     message.created_at.strftime('%H:%M')
   end
 
   def message_metadata_display(message)
     return '' if message.metadata.blank?
-    
+
     # Display tool calls if present
     if message.has_tool_calls?
       tool_names = message.ai_tool_calls.map { |call| call['name'] }.join(', ')
       "Used tools: #{tool_names}"
     elsif message.has_tool_results?
-      "Tool results available"
+      'Tool results available'
     else
       ''
     end
@@ -99,9 +99,9 @@ module ChatSessionsHelper
   def last_activity_display(chat_session)
     last_message = chat_session.last_message
     return 'Never' if last_message.nil?
-    
+
     time_diff = Time.current - last_message.created_at
-    
+
     case time_diff
     when 0..1.minute
       'Just now'
@@ -121,14 +121,14 @@ module ChatSessionsHelper
 
   def chat_session_summary(chat_session)
     return 'New conversation' if chat_session.message_count == 0
-    
+
     # Try to get a meaningful summary from the first user message
     first_user_message = chat_session.chat_messages.from_user.order(:created_at).first
     return 'New conversation' if first_user_message.nil?
-    
+
     content = first_user_message.content
     return content if content.length <= 100
-    
+
     # Truncate and add ellipsis
     content[0..96] + '...'
   end
