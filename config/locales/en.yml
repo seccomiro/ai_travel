@@ -57,6 +57,7 @@ en:
     you: "You"
     assistant: "Tripyo AI"
     create_error: "Failed to create chat session"
+    welcome_message: "Welcome! I'm your travel assistant. Where would you like to go on your next trip? Just tell me what you have in mind."
 
   # Authentication
   auth:
@@ -123,11 +124,13 @@ en:
     delete: "Delete trip"
     my_trips: "My Trips"
     new_trip: "New Trip"
+    default_title: "Untitled Trip from %{date}"
+    create_first_trip: "Create your first trip"
+    access_denied: "You are not authorized to access this trip."
     edit_trip: "Edit Trip"
     trip_details: "Trip Details"
     no_trips: "No trips yet"
     no_trips_description: "Start planning your next adventure!"
-    create_first_trip: "Create Your First Trip"
     share_trip: "Share Trip"
     name: "Trip Name"
     description_placeholder: "Describe your trip destination and plans..."
@@ -190,6 +193,8 @@ en:
   # Messages
   messages:
     welcome: "Welcome to Tripyo!"
-    trip_created: "Trip created successfully"
-    trip_updated: "Trip updated successfully"
+    trip_created: "Trip was successfully created."
+    trip_updated: "Trip was successfully updated."
     trip_deleted: "Trip deleted successfully"
+  errors:
+    trip_creation_failed: "Could not create a new trip. Please try again."

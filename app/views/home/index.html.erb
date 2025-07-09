@@ -11,9 +11,9 @@
       </p>
 
       <% if user_signed_in? %>
-        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-          <%= link_to t('trips.new'), new_trip_path, class: "btn btn-primary btn-lg me-md-2" %>
-          <%= link_to t('trips.index'), trips_path, class: "btn btn-outline-primary btn-lg" %>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <%= button_to t('trips.new'), trips_path, method: :post, class: "btn btn-primary btn-lg me-md-2" %>
+          <%= link_to t('home.learn_more'), "#features", class: "btn btn-outline-secondary btn-lg" %>
         </div>
 
         <div class="mt-4">

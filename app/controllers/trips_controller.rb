@@ -11,17 +11,20 @@ class TripsController < ApplicationController
     # Trip details view - will include chat interface in Phase 2
   end
 
-  def new
-    @trip = current_user.trips.build
-  end
-
   def create
-    @trip = current_user.trips.build(trip_params)
+    @trip = current_user.trips.create(
+      title: t('trips.default_title', date: l(Date.current, format: :long))
+    )
 
-    if @trip.save
-      redirect_to @trip, notice: t('messages.trip_created')
+    if @trip.persisted?
+      chat_session = @trip.chat_sessions.create!
+      chat_session.chat_messages.create!(
+        role: 'assistant',
+        content: t('chat_sessions.welcome_message')
+      )
+      redirect_to trip_chat_session_path(@trip, chat_session)
     else
-      render :new, status: :unprocessable_entity
+      redirect_to trips_path, alert: t('errors.trip_creation_failed')
     end
   end
 
