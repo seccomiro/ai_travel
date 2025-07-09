@@ -1,4 +1,5 @@
 require 'openai'
+require_dependency 'ai_tools_registry'
 
 class OpenaiChatService
   DEFAULT_MODEL = 'gpt-4o' # or "gpt-4-turbo-preview" if preferred
@@ -31,78 +32,6 @@ class OpenaiChatService
   private
 
   def default_tools
-    [
-      {
-        type: 'function',
-        function: {
-          name: 'get_weather',
-          description: 'Get current weather information for a specific location',
-          parameters: {
-            type: 'object',
-            properties: {
-              location: {
-                type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')",
-              },
-            },
-            required: ['location'],
-          },
-        },
-      },
-      {
-        type: 'function',
-        function: {
-          name: 'search_accommodation',
-          description: 'Search for accommodation options in a specific location',
-          parameters: {
-            type: 'object',
-            properties: {
-              location: {
-                type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')",
-              },
-              check_in: {
-                type: 'string',
-                description: 'Check-in date in YYYY-MM-DD format',
-              },
-              check_out: {
-                type: 'string',
-                description: 'Check-out date in YYYY-MM-DD format',
-              },
-              guests: {
-                type: 'integer',
-                description: 'Number of guests',
-              },
-            },
-            required: ['location'],
-          },
-        },
-      },
-      {
-        type: 'function',
-        function: {
-          name: 'plan_route',
-          description: 'Plan a route between two or more destinations',
-          parameters: {
-            type: 'object',
-            properties: {
-              destinations: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
-                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])",
-              },
-              transport_mode: {
-                type: 'string',
-                enum: ['car', 'train', 'plane', 'bus'],
-                description: 'Preferred mode of transportation',
-              },
-            },
-            required: ['destinations'],
-          },
-        },
-      },
-    ]
+    AIToolsRegistry.definitions
   end
 end
