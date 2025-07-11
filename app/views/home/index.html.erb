@@ -4,18 +4,18 @@
       <h1 class="display-4 fw-bold text-primary mb-4">
         <%= t('messages.welcome') %>
       </h1>
-      
+
       <p class="lead mb-4">
-        Plan your perfect trip with the power of AI. Tell us where you want to go, 
+        Plan your perfect trip with the power of AI. Tell us where you want to go,
         and we'll help you create an amazing personalized itinerary.
       </p>
 
       <% if user_signed_in? %>
-        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-          <%= link_to t('trips.new'), new_trip_path, class: "btn btn-primary btn-lg me-md-2" %>
-          <%= link_to t('trips.index'), trips_path, class: "btn btn-outline-primary btn-lg" %>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <%= button_to t('trips.new'), trips_path, method: :post, class: "btn btn-primary btn-lg me-md-2" %>
+          <%= link_to t('home.learn_more'), "#features", class: "btn btn-outline-secondary btn-lg" %>
         </div>
-        
+
         <div class="mt-4">
           <h3 class="h5">Your Recent Trips</h3>
           <% recent_trips = current_user.trips.recent.limit(3) %>
@@ -27,7 +27,7 @@
                     <div class="card-body">
                       <h6 class="card-title"><%= trip.title %></h6>
                       <p class="card-text small text-muted">
-                        <%= trip.status.humanize %> 
+                        <%= trip.status.humanize %>
                         <% if trip.start_date %>
                           • <%= trip.start_date.strftime("%b %d") %>
                         <% end %>
@@ -58,29 +58,29 @@
       <i class="bi bi-chat-dots fs-1 text-primary mb-3"></i>
       <h4>AI-Powered Planning</h4>
       <p class="text-muted">
-        Simply chat with our AI to describe your ideal trip. 
+        Simply chat with our AI to describe your ideal trip.
         It understands your preferences and creates personalized recommendations.
       </p>
     </div>
   </div>
-  
+
   <div class="col-md-4 text-center">
     <div class="feature-box p-4">
       <i class="bi bi-map fs-1 text-primary mb-3"></i>
       <h4>Interactive Maps</h4>
       <p class="text-muted">
-        Visualize your trip with interactive maps showing routes, 
+        Visualize your trip with interactive maps showing routes,
         accommodations, activities, and points of interest.
       </p>
     </div>
   </div>
-  
+
   <div class="col-md-4 text-center">
     <div class="feature-box p-4">
       <i class="bi bi-people fs-1 text-primary mb-3"></i>
       <h4>Collaborate & Share</h4>
       <p class="text-muted">
-        Share your trips with friends and family. 
+        Share your trips with friends and family.
         Collaborate on planning and get input from your travel companions.
       </p>
     </div>

@@ -14,8 +14,8 @@ module TripsHelper
   end
 
   # Returns the appropriate CSS class for visibility badges
-  def trip_visibility_badge_class(is_public)
-    is_public ? 'info' : 'secondary'
+  def trip_visibility_badge_class(public_trip)
+    public_trip ? 'info' : 'secondary'
   end
 
   # Returns the trip duration in days

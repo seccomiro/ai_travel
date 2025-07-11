@@ -10,10 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_221311) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_022308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
+
+  create_table "chat_messages", force: :cascade do |t|
+    t.bigint "chat_session_id", null: false
+    t.string "role"
+    t.text "content"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_session_id"], name: "index_chat_messages_on_chat_session_id"
+  end
+
+  create_table "chat_sessions", force: :cascade do |t|
+    t.bigint "trip_id", null: false
+    t.text "context_summary"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trip_id"], name: "index_chat_sessions_on_trip_id"
+  end
 
   create_table "trips", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -26,7 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_221311) do
     t.jsonb "sharing_settings", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_public", default: false, null: false
+    t.boolean "public_trip", default: false, null: false
     t.index ["sharing_settings"], name: "index_trips_on_sharing_settings", using: :gin
     t.index ["trip_data"], name: "index_trips_on_trip_data", using: :gin
     t.index ["user_id", "status"], name: "index_trips_on_user_id_and_status"
@@ -49,5 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_221311) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "chat_messages", "chat_sessions"
+  add_foreign_key "chat_sessions", "trips"
   add_foreign_key "trips", "users"
 end

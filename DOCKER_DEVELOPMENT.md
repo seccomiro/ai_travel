@@ -120,7 +120,7 @@ docker compose logs -f
 ### Volumes
 
 - **postgres_data**: PostgreSQL data persistence
-- **redis_data**: Redis data persistence  
+- **redis_data**: Redis data persistence
 - **bundle_cache**: Gem cache for faster builds
 - **node_modules**: Node.js modules cache
 
@@ -171,7 +171,7 @@ If you're running local PostgreSQL/Redis, you may need to stop them:
 # Stop local PostgreSQL
 brew services stop postgresql
 
-# Stop local Redis  
+# Stop local Redis
 brew services stop redis
 
 # Check what's using port 5432
@@ -264,4 +264,4 @@ docker stats tripyo_web_1
 
 Choose based on your needs:
 - **Docker**: For consistency, CI/CD parity, easy onboarding
-- **Local**: For maximum performance, familiar environment 
+- **Local**: For maximum performance, familiar environment

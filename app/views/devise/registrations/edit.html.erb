@@ -35,9 +35,9 @@
 
             <div class="mb-3">
               <%= f.label :preferred_language, "Language", class: "form-label" %>
-              <%= f.select :preferred_language, 
-                  options_for_select([['English', 'en'], ['Español', 'es']], resource.preferred_language), 
-                  {}, 
+              <%= f.select :preferred_language,
+                  options_for_select([['English', 'en'], ['Español', 'es']], resource.preferred_language),
+                  {},
                   { class: "form-select" } %>
             </div>
 
@@ -85,7 +85,7 @@
           <% end %>
 
           <hr class="my-4">
-          
+
           <div class="text-center">
             <%= link_to trips_path, class: "btn btn-outline-secondary" do %>
               <i class="bi bi-arrow-left"></i>
@@ -108,12 +108,12 @@
           <p class="text-muted">
             Once you delete your account, there is no going back. This will permanently delete your account and all associated trips.
           </p>
-          <%= button_to "Delete My Account", registration_path(resource_name), 
-              data: { 
+          <%= button_to "Delete My Account", registration_path(resource_name),
+              data: {
                 confirm: "Are you sure you want to permanently delete your account? This action cannot be undone.",
-                turbo_confirm: "Are you sure you want to permanently delete your account? This action cannot be undone?" 
-              }, 
-              method: :delete, 
+                turbo_confirm: "Are you sure you want to permanently delete your account? This action cannot be undone?"
+              },
+              method: :delete,
               class: "btn btn-danger" %>
         </div>
       </div>

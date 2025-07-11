@@ -25,9 +25,9 @@
 
           <div class="mb-3">
             <%= f.label :preferred_language, "Language", class: "form-label" %>
-            <%= f.select :preferred_language, 
-                options_for_select([['English', 'en'], ['Español', 'es']], 'en'), 
-                {}, 
+            <%= f.select :preferred_language,
+                options_for_select([['English', 'en'], ['Español', 'es']], 'en'),
+                {},
                 { class: "form-select" } %>
           </div>
 
@@ -50,7 +50,7 @@
         <% end %>
 
         <hr class="my-4">
-        
+
         <div class="text-center">
           <%= render "devise/shared/links" %>
         </div>

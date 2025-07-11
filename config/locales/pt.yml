@@ -1,0 +1,90 @@
+pt:
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d de %b"
+
+  time:
+    formats:
+      default: "%a, %d de %B de %Y, %H:%M:%S %z"
+      long: "%d de %B de %Y, %H:%M"
+      short: "%d de %b, %H:%M"
+
+  layouts:
+    application:
+      title: "Tripyo - Seu Planejador de Viagens com IA"
+      home: "Início"
+      my_trips: "Minhas Viagens"
+      new_trip: "Nova Viagem"
+      edit_profile: "Editar Perfil"
+      log_out: "Sair"
+      log_in: "Entrar"
+      sign_up: "Cadastre-se"
+
+  home:
+    index:
+      welcome_title: "Planeje Sua Próxima Aventura"
+      welcome_subtitle: "Tripyo usa IA para criar roteiros de viagem personalizados. Basta conversar com nosso assistente e ver sua viagem ganhar vida."
+      learn_more: "Saiba Mais"
+    features:
+      intelligent_planning: "Planejamento Inteligente"
+      intelligent_planning_desc: "Obtenha planos de viagem personalizados baseados em suas preferências."
+      interactive_chat: "Chat Interativo"
+      interactive_chat_desc: "Converse com nosso assistente de IA para refinar e ajustar seus planos de viagem."
+      collaborate_share: "Colabore e Compartilhe"
+      collaborate_share_desc: "Compartilhe seus planos de viagem com amigos e familiares para uma experiência colaborativa."
+
+  trips:
+    my_trips: "Minhas Viagens"
+    new_trip: "Nova Viagem"
+    default_title: "Viagem Sem Título de %{date}"
+    create_first_trip: "Crie sua primeira viagem"
+    access_denied: "Você não tem autorização para acessar esta viagem."
+    edit_trip: "Editar Viagem"
+    trip_details: "Detalhes da Viagem"
+    no_trips: "Nenhuma viagem ainda"
+    no_trips_description: "Comece a planejar sua próxima aventura!"
+    share_trip: "Compartilhar Viagem"
+    name: "Nome da Viagem"
+    description: "Descrição"
+    start_date: "Data de Início"
+    end_date: "Data de Fim"
+    status: "Status"
+    planning: "Planejamento"
+    active: "Ativa"
+    completed: "Concluída"
+    public_trip: "Viagem Pública"
+    visibility: "Visibilidade"
+    private: "Privada"
+    public: "Pública"
+    actions: "Ações"
+    show: "Mostrar"
+    edit: "Editar"
+    delete: "Excluir"
+    confirm_delete: "Você tem certeza?"
+    new: "Nova Viagem"
+    index: "Minhas Viagens"
+
+  chat_sessions:
+    welcome_message: "Bem-vindo! Eu sou seu assistente de viagens. Para onde você gostaria de ir na sua próxima viagem? Apenas me diga o que você tem em mente."
+    create_error: "Não foi possível iniciar uma nova sessão de chat. Por favor, tente novamente."
+    you: "Você"
+    assistant: "Assistente"
+
+  errors:
+    trip_creation_failed: "Não foi possível criar uma nova viagem. Por favor, tente novamente."
+
+  messages:
+    trip_created: "Viagem criada com sucesso."
+    trip_updated: "Viagem atualizada com sucesso."
+    trip_deleted: "Viagem excluída com sucesso."
+    log_in_success: "Login efetuado com sucesso."
+    log_out_success: "Logout efetuado com sucesso."
+    sign_up_success: "Cadastro realizado com sucesso! Bem-vindo."
+  nav:
+    trips: "Minhas Viagens"
+    profile: "Perfil"
+    logout: "Sair"
+    login: "Entrar"
+    sign_up: "Cadastre-se" 

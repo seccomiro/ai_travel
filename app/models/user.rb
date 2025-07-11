@@ -4,18 +4,14 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  # Callbacks
   after_initialize :set_default_preferred_language
 
-  # Validations
   validates :preferred_language, inclusion: { in: %w[en es] }
   validates :first_name, :last_name, presence: true, length: { maximum: 100 }
 
-  # Associations
   has_many :trips, dependent: :destroy
   # has_many :user_preferences, dependent: :destroy
 
-  # Instance methods
   def full_name
     "#{first_name} #{last_name}".strip
   end

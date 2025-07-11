@@ -1,0 +1,60 @@
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exportModalLabel"><%= t('trips.export_trip') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label"><%= t('trips.export_format') %></label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportFormat" id="exportPDF" value="pdf" checked>
+            <label class="form-check-label" for="exportPDF">
+              <i class="bi bi-file-pdf"></i> PDF Document
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportFormat" id="exportJSON" value="json">
+            <label class="form-check-label" for="exportJSON">
+              <i class="bi bi-file-code"></i> JSON Data
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportFormat" id="exportCSV" value="csv">
+            <label class="form-check-label" for="exportCSV">
+              <i class="bi bi-file-text"></i> CSV Spreadsheet
+            </label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= t('trips.export_options') %></label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeChat" checked>
+            <label class="form-check-label" for="includeChat">
+              <%= t('trips.include_chat_history') %>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeMap" checked>
+            <label class="form-check-label" for="includeMap">
+              <%= t('trips.include_map') %>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeCosts" checked>
+            <label class="form-check-label" for="includeCosts">
+              <%= t('trips.include_cost_breakdown') %>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('actions.cancel') %></button>
+        <button type="button" class="btn btn-primary" onclick="exportTrip()">
+          <i class="bi bi-download"></i> <%= t('actions.export') %>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

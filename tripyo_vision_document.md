@@ -85,16 +85,16 @@ At any point, the system should be able to generate:
 
 ### Tech Stack
 
-- **Backend**:  
-  - Framework: **Ruby on Rails 8** with **Hotwire** (Turbo/Stimulus).  
-  - Database: **PostgreSQL** with `pgvector` extension for vector search.  
-  - Background jobs: **Sidekiq** + Redis.  
+- **Backend**:
+  - Framework: **Ruby on Rails 8** with **Hotwire** (Turbo/Stimulus).
+  - Database: **PostgreSQL** with `pgvector` extension for vector search.
+  - Background jobs: **Sidekiq** + Redis.
   - Authentication: Devise with OAuth (Google, Apple).
   - UI: Bootstrap.
 
-- **Frontend**:  
-  - Hotwire-based HTML-over-the-wire frontend.  
-  - Real-time chat using Turbo Streams.  
+- **Frontend**:
+  - Hotwire-based HTML-over-the-wire frontend.
+  - Real-time chat using Turbo Streams.
   - Dynamic components via Stimulus controllers.
 
 - **Automated Testing**:

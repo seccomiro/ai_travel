@@ -6,7 +6,7 @@ FactoryBot.define do
     start_date { 1.week.from_now.to_date }
     end_date { 2.weeks.from_now.to_date }
     status { "planning" }
-    is_public { false }
+    public_trip { false }
     trip_data { {} }
     sharing_settings { {} }
 
@@ -21,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :public do
-      is_public { true }
+      public_trip { true }
     end
 
     trait :with_dates do
@@ -39,7 +39,7 @@ FactoryBot.define do
         {
           "destinations" => ["Paris", "London"],
           "budget" => 2000,
-          "transportation" => "plane"
+          "transportation" => "plane",
         }
       end
     end
@@ -48,7 +48,7 @@ FactoryBot.define do
       sharing_settings do
         {
           "allowed_users" => [],
-          "share_level" => "view"
+          "share_level" => "view",
         }
       end
     end

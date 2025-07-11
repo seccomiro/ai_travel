@@ -1,33 +1,26 @@
 class Trip < ApplicationRecord
   belongs_to :user
+  has_many :chat_sessions, dependent: :destroy
 
-  # Callbacks
   after_initialize :set_defaults
 
-  # Validations
   validates :title, presence: true, length: { maximum: 255 }
   validates :status, inclusion: { in: %w[planning active completed cancelled] }
   validates :start_date, :end_date, presence: true, if: :dates_required?
   validate :end_date_after_start_date, if: :both_dates_present?
 
-  # JSON attributes
   attribute :trip_data, :json, default: {}
   attribute :sharing_settings, :json, default: {}
-  attribute :is_public, :boolean, default: false
+  attribute :public_trip, :boolean, default: false
 
-  # Enums
   enum :status, {
     planning: 'planning',
     active: 'active',
     completed: 'completed',
-    cancelled: 'cancelled'
-  }
+    cancelled: 'cancelled',
+  }, validate: true
 
-  # Scopes
-  scope :planning, -> { where(status: 'planning') }
-  scope :active, -> { where(status: 'active') }
-  scope :completed, -> { where(status: 'completed') }
-  scope :public_trips, -> { where(is_public: true) }
+  scope :public_trips, -> { where(public_trip: true) }
   scope :by_user, ->(user) { where(user: user) }
   scope :recent, -> { order(created_at: :desc) }
 
@@ -38,19 +31,6 @@ class Trip < ApplicationRecord
 
   def name=(value)
     self.title = value
-  end
-
-  # Instance methods
-  def planning?
-    status == 'planning'
-  end
-
-  def active?
-    status == 'active'
-  end
-
-  def completed?
-    status == 'completed'
   end
 
   def duration_in_days
@@ -85,7 +65,7 @@ class Trip < ApplicationRecord
     end
   end
 
-  def is_current?
+  def current?
     status == 'active'
   end
 
@@ -94,13 +74,21 @@ class Trip < ApplicationRecord
     self.trip_data[key] = value
   end
 
+  def active_chat_session
+    chat_sessions.active.first
+  end
+
+  def has_active_chat_session?
+    chat_sessions.active.exists?
+  end
+
   private
 
   def set_defaults
     self.status ||= 'planning'
     self.trip_data ||= {}
     self.sharing_settings ||= {}
-    # is_public has a database default of false
+    # public_trip has a database default of false
   end
 
   def dates_required?

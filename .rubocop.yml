@@ -25,3 +25,9 @@ Layout/TrailingEmptyLines:
 # Ensure files end with a newline
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma

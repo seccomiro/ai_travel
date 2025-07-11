@@ -1,0 +1,84 @@
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    <!-- Chat Interface -->
+    <div class="col-md-8 h-100">
+      <div class="d-flex flex-column h-100">
+        <!-- Chat Header -->
+        <div class="border-bottom p-3 bg-light">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0"><%= t('chat_sessions.title') %></h4>
+              <small class="text-muted"><%= @trip.name %></small>
+            </div>
+            <div class="btn-group" role="group">
+              <%= link_to t('actions.back_to_trip'), trip_path(@trip), class: "btn btn-outline-secondary btn-sm" %>
+              <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tripSettingsModal">
+                <i class="bi bi-gear"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-grow-1 p-3 overflow-auto" style="height: 60vh;">
+          <% @chat_session.chat_messages.order(:created_at).each do |message| %>
+            <%= render 'chat_messages/message', message: message %>
+          <% end %>
+        </div>
+
+        <!-- Message Input -->
+        <div class="border-top p-3 bg-light">
+          <%= render 'chat_sessions/message_form', chat_session: @chat_session %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trip Sidebar -->
+    <div class="col-md-4 h-100">
+      <div class="d-flex flex-column h-100">
+        <!-- Trip Info Header -->
+        <div class="border-bottom p-3 bg-light">
+          <h5 class="mb-0"><%= t('trips.trip_info') %></h5>
+        </div>
+
+        <!-- Trip Details -->
+        <div id="trip-sidebar" class="flex-grow-1 p-3 overflow-auto">
+          <%= render 'trips/sidebar_content', trip: @trip %>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="border-top p-3 bg-light">
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exportModal">
+              <i class="bi bi-download"></i> <%= t('trips.export_trip') %>
+            </button>
+            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModal">
+              <i class="bi bi-share"></i> <%= t('trips.share_trip') %>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<%= render 'chat_sessions/modals/trip_settings_modal', trip: @trip %>
+<%= render 'chat_sessions/modals/export_modal', trip: @trip %>
+<%= render 'chat_sessions/modals/share_modal', trip: @trip %>
+
+<script>
+  // Auto-scroll to bottom of chat messages
+  document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+
+  // Auto-scroll after Turbo Stream updates
+  document.addEventListener('turbo:frame-load', function() {
+    const chatMessages = document.getElementById('chat-messages');
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  });
+</script>

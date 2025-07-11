@@ -29,7 +29,7 @@
 
 en:
   hello: "Hello world"
-  
+
   # Navigation
   nav:
     home: "Home"
@@ -38,15 +38,27 @@ en:
     logout: "Logout"
     login: "Login"
     sign_up: "Sign up"
-  
+
   # Trip planning
-    
+
   # Chat interface
   chat:
     placeholder: "Tell me about your trip..."
     send: "Send"
     ai_thinking: "Thinking..."
-    
+
+  # Chat sessions
+  chat_sessions:
+    title: "Trip Planning Chat"
+    message_placeholder: "Tell me about your trip plans..."
+    message_hint: "Ask about destinations, activities, accommodation, or anything else!"
+    sending: "Sending..."
+    typing: "AI is typing..."
+    you: "You"
+    assistant: "Tripyo AI"
+    create_error: "Failed to create chat session"
+    welcome_message: "Welcome! I'm your travel assistant. Where would you like to go on your next trip? Just tell me what you have in mind."
+
   # Authentication
   auth:
     sign_in: "Sign in"
@@ -59,7 +71,7 @@ en:
     forgot_password: "Forgot your password?"
     first_name: "First name"
     last_name: "Last name"
-    
+
   # Common actions
   actions:
     save: "Save"
@@ -71,7 +83,11 @@ en:
     previous: "Previous"
     view: "View"
     show: "Show"
-    
+    back_to_trip: "Back to Trip"
+    close: "Close"
+    send: "Send"
+    export: "Export"
+
   # Home page
   home:
     good_morning: "Good morning"
@@ -92,7 +108,7 @@ en:
       export:
         title: "Export & Offline"
         description: "Download your travel guides as PDFs for offline access during your trip."
-  
+
   # Trip helpers
   trips:
     new: "New trip"
@@ -108,11 +124,13 @@ en:
     delete: "Delete trip"
     my_trips: "My Trips"
     new_trip: "New Trip"
+    default_title: "Untitled Trip from %{date}"
+    create_first_trip: "Create your first trip"
+    access_denied: "You are not authorized to access this trip."
     edit_trip: "Edit Trip"
     trip_details: "Trip Details"
     no_trips: "No trips yet"
     no_trips_description: "Start planning your next adventure!"
-    create_first_trip: "Create Your First Trip"
     share_trip: "Share Trip"
     name: "Trip Name"
     description_placeholder: "Describe your trip destination and plans..."
@@ -144,10 +162,45 @@ en:
       planning: "Planning"
       active: "Active"
       completed: "Completed"
-  
+    continue_chat: "Continue Chat"
+    trip_info: "Trip Information"
+    overview: "Overview"
+    details: "Details"
+    live_data: "Live Trip Data"
+    destinations: "Destinations"
+    accommodations: "Accommodations"
+    transportation: "Transportation"
+    estimated_cost: "Estimated Cost"
+    no_data_yet: "No trip data yet"
+    start_chatting: "Start chatting to build your trip!"
+    settings: "Trip Settings"
+    export_trip: "Export Trip"
+    share_trip: "Share Trip"
+    export_format: "Export Format"
+    export_options: "Export Options"
+    include_chat_history: "Include chat history"
+    include_map: "Include map"
+    include_cost_breakdown: "Include cost breakdown"
+    share_link: "Share Link"
+    share_permissions: "Share Permissions"
+    view_only: "View only"
+    can_edit: "Can edit"
+    share_via_email: "Share via Email"
+    enter_email: "Enter email address"
+    share_social: "Share on Social Media"
+    access_denied: "Access denied"
+
   # Messages
   messages:
     welcome: "Welcome to Tripyo!"
-    trip_created: "Trip created successfully"
-    trip_updated: "Trip updated successfully"
-    trip_deleted: "Trip deleted successfully"
+    trip_created: "Trip was successfully created."
+    trip_updated: "Trip was successfully updated."
+    trip_deleted: "Trip was successfully deleted."
+  errors:
+    trip_creation_failed: "Could not create a new trip. Please try again."
+  nav:
+    trips: "My Trips"
+    profile: "Profile"
+    logout: "Log Out"
+    login: "Log In"
+    sign_up: "Sign Up"

@@ -96,7 +96,7 @@ bundle exec rspec --require spec_helper
 
 **Test Coverage:**
 - Model tests: 48 examples
-- Request tests: 17 examples  
+- Request tests: 17 examples
 - Helper tests: 43 examples
 - Integration tests: 2 examples
 
