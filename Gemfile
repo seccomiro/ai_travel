@@ -31,6 +31,7 @@ gem 'omniauth-rails_csrf_protection'
 # AI Integration
 gem 'ruby-openai'
 gem 'pgvector'
+gem 'google_maps_service'
 
 # Background Processing
 gem 'sidekiq'

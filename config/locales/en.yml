@@ -162,6 +162,8 @@ en:
       planning: "Planning"
       active: "Active"
       completed: "Completed"
+      cancelled: "Cancelled"
+    route_map: "Route Map"
     continue_chat: "Continue Chat"
     trip_info: "Trip Information"
     overview: "Overview"
@@ -197,7 +199,7 @@ en:
     trip_updated: "Trip was successfully updated."
     trip_deleted: "Trip was successfully deleted."
   errors:
-    trip_creation_failed: "Could not create a new trip. Please try again."
+    trip_creation_failed: "Could not create a new trip."
   nav:
     trips: "My Trips"
     profile: "Profile"

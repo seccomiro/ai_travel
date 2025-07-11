@@ -1,31 +1,31 @@
 module AITools
   class PlanRouteTool < BaseTool
-    def self.definition
+    def definition
       {
         type: 'function',
         function: {
           name: 'plan_route',
-          description: 'Plan a route between two or more destinations',
+          description: 'Plan a new route from scratch, overwriting any existing route. Supports driving, walking, bicycling, and transit. Does not support flights.',
           parameters: {
             type: 'object',
             properties: {
               destinations: {
                 type: 'array',
                 items: {
-                  type: 'string'
+                  type: 'string',
                 },
-                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])"
+                description: "Array of destination names in order. E.g., ['Paris, France', 'London, UK'].",
               },
               transport_mode: {
                 type: 'string',
-                enum: ['car', 'train', 'plane', 'bus'],
-                description: 'Preferred mode of transportation'
-              }
+                enum: ['driving', 'walking', 'bicycling', 'transit'],
+                description: "Preferred mode of transportation. Defaults to 'driving'.",
+              },
             },
-            required: ['destinations']
-          }
-        }
+            required: ['destinations'],
+          },
+        },
       }
     end
   end
-end 
+end

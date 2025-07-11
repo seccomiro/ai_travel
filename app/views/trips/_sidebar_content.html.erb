@@ -23,19 +23,29 @@
         </div>
         <div class="col-4">
           <div class="border rounded p-2">
-            <h6 class="text-muted mb-0"><%= t('trips.activities') %></h6>
-            <span class="fs-5 fw-bold" id="trip-activities-count">
-              <%= trip.trip_data.dig('activities', 'count') || 0 %>
+            <h6 class="text-muted mb-0"><%= t('trips.status_label') %></h6>
+            <span class="badge bg-primary" id="trip-status-badge">
+              <%= t("trips.status.#{trip.status}") %>
             </span>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="mb-2">
-        <span class="badge <%= trip.status_badge_class %> fs-6">
-          <%= t("trips.status.#{trip.status}") %>
-        </span>
-      </div>
+  <!-- Route Map -->
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title"><%= t('trips.route_map') %></h6>
+      <div
+        id="google-map"
+        class="rounded"
+        style="height: 250px; background-color: #f0f0f0;"
+        data-controller="google-map"
+        data-google-map-api-key-value="<%= Rails.application.credentials.google_maps_api_key %>"
+        data-google-map-route-value="<%= trip.trip_data.dig('current_route')&.to_json || '{}' %>"
+        data-google-map-route-id-value="<%= trip.trip_data.dig('current_route', 'id') %>"
+      ></div>
     </div>
   </div>
 

@@ -10,13 +10,15 @@ class OpenaiChatService
   end
 
   # messages: [{role: 'user'|'assistant'|'system', content: '...'}]
-  def chat(messages, model: DEFAULT_MODEL, temperature: DEFAULT_TEMPERATURE, tools: nil)
+  def chat(trip, messages, model: DEFAULT_MODEL, temperature: DEFAULT_TEMPERATURE, tools: true)
     params = {
       model: model,
       messages: messages,
       temperature: temperature,
     }
-    params[:tools] = tools || default_tools if tools != false
+    params[:tools] = AIToolsRegistry.new(trip).definitions if tools
+    params[:tool_choice] = 'auto' if tools
+
     response = @client.chat(parameters: params)
     if response.dig('choices', 0, 'message', 'content') || response.dig('choices', 0, 'message', 'tool_calls')
       {
@@ -27,11 +29,5 @@ class OpenaiChatService
     else
       raise "OpenAI API error: #{response['error'] || response}"
     end
-  end
-
-  private
-
-  def default_tools
-    AIToolsRegistry.definitions
   end
 end

@@ -1,105 +1,80 @@
-class TravelToolsService
-  def self.call_tool(tool_name, arguments)
+# frozen_string_literal: true
+
+module TravelToolsService
+  def self.call_tool(tool_call, trip)
+    tool_name = tool_call['function']['name']
+    args = JSON.parse(tool_call['function']['arguments'])
+
     case tool_name
     when 'get_weather'
-      get_weather(arguments['location'])
+      get_weather(args)
     when 'search_accommodation'
-      search_accommodation(arguments)
+      search_accommodation(args)
     when 'plan_route'
-      plan_route(arguments)
+      plan_route(args)
+    when 'modify_route'
+      modify_route(args, trip)
     else
       { error: "Unknown tool: #{tool_name}" }
     end
+  rescue JSON::ParserError
+    { error: 'Invalid arguments for tool call' }
   end
 
-  private
-
-  def self.get_weather(location)
-    # TODO: Integrate with real weather API (OpenWeatherMap, etc.)
-    # For now, return mock data
+  def self.get_weather(args)
+    # Mock weather data
     {
-      location: location,
-      temperature: rand(15..30),
-      condition: ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy'].sample,
-      humidity: rand(40..80),
-      wind_speed: rand(5..25),
-      note: 'This is mock weather data. Integrate with a real weather API for production.',
+      location: args['location'],
+      temperature: "#{rand(15..30)}°C",
+      condition: %w[Sunny Cloudy Rainy Windy].sample,
+      note: 'This is mock weather data.',
     }
   end
 
   def self.search_accommodation(args)
-    location = args['location']
-    check_in = args['check_in']
-    check_out = args['check_out']
-    guests = args['guests'] || 2
-
-    # TODO: Integrate with real accommodation APIs (Booking.com, Airbnb, etc.)
-    # For now, return mock data
+    # Mock accommodation data
     {
-      location: location,
-      check_in: check_in,
-      check_out: check_out,
-      guests: guests,
+      location: args['location'],
       options: [
-        {
-          name: "Grand Hotel #{location.split(',').first}",
-          type: 'Hotel',
-          price_per_night: rand(100..300),
-          rating: rand(3.5..5.0).round(1),
-          amenities: ['WiFi', 'Pool', 'Restaurant', 'Spa'],
-        },
-        {
-          name: "Cozy #{location.split(',').first} Inn",
-          type: 'Hotel',
-          price_per_night: rand(80..150),
-          rating: rand(3.0..4.5).round(1),
-          amenities: ['WiFi', 'Breakfast', 'Parking'],
-        },
-        {
-          name: "#{location.split(',').first} Central Apartment",
-          type: 'Apartment',
-          price_per_night: rand(120..250),
-          rating: rand(4.0..5.0).round(1),
-          amenities: ['WiFi', 'Kitchen', 'Washing Machine', 'Balcony'],
-        },
+        { name: 'Hotel Sunshine', price: '$150/night', rating: '4.5 stars' },
+        { name: 'Cozy Inn', price: '$100/night', rating: '4.0 stars' },
       ],
-      note: 'This is mock accommodation data. Integrate with real booking APIs for production.',
+      note: 'This is mock accommodation data.',
     }
   end
 
   def self.plan_route(args)
-    destinations = args['destinations']
-    transport_mode = args['transport_mode'] || 'car'
-
-    # TODO: Integrate with real routing APIs (Google Maps, etc.)
-    # For now, return mock data
     {
-      destinations: destinations,
-      transport_mode: transport_mode,
-      route: destinations.each_cons(2).map.with_index do |(from, to), index|
-        {
-          segment: index + 1,
-          from: from,
-          to: to,
-          distance: rand(50..500),
-          duration: rand(1..8),
-          transport: transport_mode,
-          estimated_cost: case transport_mode
-                          when 'car'
-                           rand(20..100)
-                          when 'train'
-                           rand(30..150)
-                          when 'plane'
-                           rand(100..500)
-                          when 'bus'
-                           rand(15..80)
-                          end,
-        }
-      end,
-      total_distance: rand(200..2000),
-      total_duration: rand(5..24),
-      total_cost: rand(100..800),
-      note: 'This is mock routing data. Integrate with Google Maps or similar for production.',
+      destinations: args['destinations'],
+      transport_mode: args['transport_mode'] || 'driving',
+    }
+  end
+
+  def self.modify_route(args, trip)
+    current_destinations = trip.trip_data.dig('current_route', 'destinations') || []
+
+    # Remove destinations
+    if args['remove_destinations'].present?
+      current_destinations.reject! { |dest| args['remove_destinations'].include?(dest) }
+    end
+
+    # Add destinations
+    if args['add_destinations'].present?
+      if args['add_before'].present?
+        index = current_destinations.index(args['add_before']) || 0
+        current_destinations.insert(index, *args['add_destinations'])
+      elsif args['add_after'].present?
+        index = current_destinations.index(args['add_after']) || current_destinations.length - 1
+        current_destinations.insert(index + 1, *args['add_destinations'])
+      else
+        current_destinations.concat(args['add_destinations'])
+      end
+    end
+
+    # Return the same structure as plan_route
+    {
+      destinations: current_destinations.uniq,
+      transport_mode: trip.trip_data.dig('current_route', 'mode') || 'driving',
     }
   end
 end
