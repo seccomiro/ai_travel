@@ -1,7 +1,7 @@
 class TripsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status]
-  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status]
+  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status, :latest_route]
+  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status, :latest_route]
 
   def index
     @trips = current_user.trips.recent
@@ -51,6 +51,10 @@ class TripsController < ApplicationController
     else
       redirect_to @trip, alert: 'Failed to update trip status'
     end
+  end
+
+  def latest_route
+    render json: @trip.trip_data['latest_route']
   end
 
   private

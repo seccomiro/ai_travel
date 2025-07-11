@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :trips do
     member do
       patch :update_status
+      get :latest_route
     end
 
     resources :chat_sessions, only: [:show, :create] do
