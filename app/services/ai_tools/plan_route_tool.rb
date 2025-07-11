@@ -12,20 +12,20 @@ module AITools
               destinations: {
                 type: 'array',
                 items: {
-                  type: 'string'
+                  type: 'string',
                 },
-                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])"
+                description: "Array of destination names (e.g., ['Paris', 'London', 'Rome'])",
               },
               transport_mode: {
                 type: 'string',
                 enum: ['car', 'train', 'plane', 'bus'],
-                description: 'Preferred mode of transportation'
-              }
+                description: 'Preferred mode of transportation',
+              },
             },
-            required: ['destinations']
-          }
-        }
+            required: ['destinations'],
+          },
+        },
       }
     end
   end
-end 
+end

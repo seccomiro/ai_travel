@@ -6,4 +6,4 @@ module AITools
       raise NotImplementedError, "#{name} must implement the .definition class method."
     end
   end
-end 
+end

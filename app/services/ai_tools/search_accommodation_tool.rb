@@ -11,25 +11,25 @@ module AITools
             properties: {
               location: {
                 type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')"
+                description: "The city and country name (e.g., 'Paris, France')",
               },
               check_in: {
                 type: 'string',
-                description: 'Check-in date in YYYY-MM-DD format'
+                description: 'Check-in date in YYYY-MM-DD format',
               },
               check_out: {
                 type: 'string',
-                description: 'Check-out date in YYYY-MM-DD format'
+                description: 'Check-out date in YYYY-MM-DD format',
               },
               guests: {
                 type: 'integer',
-                description: 'Number of guests'
-              }
+                description: 'Number of guests',
+              },
             },
-            required: ['location']
-          }
-        }
+            required: ['location'],
+          },
+        },
       }
     end
   end
-end 
+end

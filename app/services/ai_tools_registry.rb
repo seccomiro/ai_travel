@@ -14,4 +14,4 @@ class AIToolsRegistry
   def self.tool_files
     Dir[Rails.root.join('app', 'services', 'ai_tools', '**', '*_tool.rb')]
   end
-end 
+end

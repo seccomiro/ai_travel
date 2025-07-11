@@ -11,13 +11,13 @@ module AITools
             properties: {
               location: {
                 type: 'string',
-                description: "The city and country name (e.g., 'Paris, France')"
-              }
+                description: "The city and country name (e.g., 'Paris, France')",
+              },
             },
-            required: ['location']
-          }
-        }
+            required: ['location'],
+          },
+        },
       }
     end
   end
-end 
+end
