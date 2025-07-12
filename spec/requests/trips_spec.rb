@@ -17,7 +17,7 @@ RSpec.describe "Trips", type: :request do
     it "displays user's trips" do
       trip
       get trips_path
-      expect(response.body).to include(trip.title)
+      expect(response.body).to include(trip.name) # Use name alias
     end
   end
 
@@ -29,7 +29,7 @@ RSpec.describe "Trips", type: :request do
 
     it "displays trip details" do
       get trip_path(trip)
-      expect(response.body).to include(trip.title)
+      expect(response.body).to include(trip.name) # Use name alias
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.describe "Trips", type: :request do
       }.to change(Trip, :count).by(1)
 
       new_trip = Trip.last
-      expect(response).to redirect_to(trip_chat_session_path(new_trip, new_trip.chat_sessions.first, locale: I18n.default_locale.to_s))
+      expect(response).to redirect_to(trip_chat_session_path(new_trip, new_trip.chat_sessions.first, locale: I18n.default_locale))
     end
   end
 
@@ -58,25 +58,25 @@ RSpec.describe "Trips", type: :request do
 
   describe "PATCH /trips/:id" do
     it "updates the trip with valid params" do
-      patch trip_path(trip), params: { trip: { title: "Updated Trip" } }
+      patch trip_path(trip), params: { trip: { name: "Updated Trip" } } # Use name alias
       trip.reload
-      expect(trip.title).to eq("Updated Trip")
-      expect(response).to redirect_to(trip_path(trip, locale: I18n.default_locale.to_s))
+      expect(trip.name).to eq("Updated Trip")
+      expect(response).to redirect_to(trip_path(trip, locale: I18n.default_locale))
     end
 
     it "renders edit template with invalid params" do
-      patch trip_path(trip), params: { trip: { title: "" } }
+      patch trip_path(trip), params: { trip: { name: "" } } # Use name alias
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
   describe "DELETE /trips/:id" do
     it "deletes the trip" do
-      trip
+      trip_to_delete = create(:trip, user: user) # Create a fresh trip to delete
       expect {
-        delete trip_path(trip)
+        delete trip_path(trip_to_delete)
       }.to change(Trip, :count).by(-1)
-      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale))
     end
   end
 
@@ -86,14 +86,12 @@ RSpec.describe "Trips", type: :request do
 
     it "redirects when trying to access another user's trip" do
       get trip_path(other_trip)
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale))
     end
 
     it "redirects when trying to edit another user's trip" do
       get edit_trip_path(other_trip)
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(trips_path(locale: I18n.default_locale.to_s))
+      expect(response).to redirect_to(trips_path(locale: I18n.default_locale))
     end
   end
 

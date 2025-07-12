@@ -3,6 +3,8 @@ FactoryBot.define do
     association :user
     sequence(:name) { |n| "Trip #{n}" }
     description { "A wonderful trip to explore new places" }
+    origin { "New York, NY" }
+    destination { "Los Angeles, CA" }
     start_date { 1.week.from_now.to_date }
     end_date { 2.weeks.from_now.to_date }
     status { "planning" }

@@ -2,7 +2,7 @@ class ChatSessionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_trip
   before_action :set_chat_session, only: [:show, :create_message]
-  before_action :ensure_trip_owner, only: [:show, :create_message]
+  before_action :ensure_trip_owner, only: [:show, :create, :create_message]
 
   def show
     # Show the chat interface for the trip
@@ -22,21 +22,35 @@ class ChatSessionsController < ApplicationController
       content: params[:content]
     )
 
-    if @message.save
+        if @message.save
       # Process with AI and create assistant response
-      assistant_message = ChatResponseService.new(@chat_session).call(@message)
+      result = ChatResponseService.new(@chat_session).call(@message)
+      assistant_message = result[:message]
+      @trip = result[:trip]  # Use the updated trip object
+
+      Rails.logger.info "Trip data after AI update: #{@trip.trip_data.inspect}"
 
       respond_to do |format|
         format.turbo_stream do
+          Rails.logger.info "Rendering Turbo Stream update for trip sidebar"
+
+          # Generate all the content we need
+          message_content = render_to_string(partial: 'chat_messages/message', locals: { message: assistant_message }, formats: [:html])
+          form_content = render_to_string(partial: 'chat_sessions/message_form', locals: { chat_session: @chat_session }, formats: [:html])
+          sidebar_content = render_to_string(partial: 'trips/sidebar_content', locals: { trip: @trip }, formats: [:html])
+
+          Rails.logger.info "Sidebar content length: #{sidebar_content.length}"
+          Rails.logger.info "Sidebar content preview: #{sidebar_content[0..200]}..."
+
           render turbo_stream: [
             # Remove the typing indicator
             turbo_stream.update('ai-typing', ''),
             # Add the AI response
-            turbo_stream.append('chat-messages', partial: 'chat_messages/message', locals: { message: assistant_message }),
+            turbo_stream.append('chat-messages', message_content),
             # Reset the form
-            turbo_stream.update('message-form', partial: 'chat_sessions/message_form', locals: { chat_session: @chat_session }),
+            turbo_stream.update('message-form', form_content),
             # Update trip sidebar
-            turbo_stream.update('trip-sidebar', partial: 'trips/sidebar_content', locals: { trip: @trip }),
+            turbo_stream.update('trip-sidebar', sidebar_content),
           ]
         end
         format.html { redirect_to trip_chat_session_path(@trip, @chat_session) }
@@ -61,7 +75,7 @@ class ChatSessionsController < ApplicationController
   private
 
   def set_trip
-    @trip = current_user.trips.find(params[:trip_id])
+    @trip = Trip.find(params[:trip_id])
   end
 
   def set_chat_session

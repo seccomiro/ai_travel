@@ -26,17 +26,42 @@ class ChatResponseService
 
     update_trip_from_conversation(user_message, assistant_message) if assistant_message.persisted?
 
-    assistant_message
+    # Return both the assistant message and the updated trip
+    { message: assistant_message, trip: @trip }
   end
 
   private
 
   def handle_tool_calls(ai_result, messages)
-    tool_results, route_object = execute_tool_calls(ai_result[:tool_calls])
+    tool_results, route_object, details_object = execute_tool_calls(ai_result[:tool_calls])
 
     # If a route was planned or modified, store the details for the frontend to use.
     if route_object
       @trip.update(trip_data: @trip.trip_data.merge('current_route' => route_object))
+    end
+
+    # If trip details were modified, update the trip record.
+    if details_object.present?
+      # Ensure args are symbolized for consistent access
+      details_params = details_object.deep_symbolize_keys
+
+      native_attributes = %i[title description start_date end_date]
+      native_params = details_params.slice(*native_attributes)
+      trip_data_params = details_params.except(*native_attributes)
+
+      @trip.assign_attributes(native_params) if native_params.any?
+      if trip_data_params.any?
+        Rails.logger.info "Updating trip_data with: #{trip_data_params.inspect}"
+        @trip.trip_data = (@trip.trip_data || {}).merge(trip_data_params)
+        Rails.logger.info "Updated trip_data: #{@trip.trip_data.inspect}"
+      end
+
+      # Save the trip if changes were made
+      if @trip.changed?
+        Rails.logger.info "Saving trip with changes: #{@trip.changes.inspect}"
+        @trip.save
+        Rails.logger.info "Trip saved successfully"
+      end
     end
 
     # Add the assistant message with tool calls to the history
@@ -66,6 +91,7 @@ class ChatResponseService
 
   def execute_tool_calls(tool_calls)
     route_object = nil
+    details_object = nil
     results = tool_calls.map do |tool_call|
       result = TravelToolsService.call_tool(tool_call, @trip)
 
@@ -77,6 +103,8 @@ class ChatResponseService
           'destinations' => result[:destinations],
           'mode' => result[:transport_mode],
         }
+      elsif tool_name == 'modify_trip_details'
+        details_object = result
       end
 
       {
@@ -86,7 +114,7 @@ class ChatResponseService
         content: result.to_json,
       }
     end
-    [results, route_object]
+    [results, route_object, details_object]
   end
 
   def create_assistant_message(content, metadata)

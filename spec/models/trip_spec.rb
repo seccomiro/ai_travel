@@ -43,6 +43,23 @@ RSpec.describe Trip, type: :model do
       trip = build(:trip, start_date: nil, end_date: nil)
       expect(trip).to be_valid
     end
+
+    context 'when trip is active or completed' do
+      it 'is invalid without a start_date' do
+        trip = build(:trip, status: 'active', start_date: nil)
+        expect(trip).to_not be_valid
+      end
+
+      it 'is invalid without an origin' do
+        trip = build(:trip, status: 'active', origin: nil)
+        expect(trip).to_not be_valid
+      end
+
+      it 'is invalid without a destination' do
+        trip = build(:trip, status: 'active', destination: nil)
+        expect(trip).to_not be_valid
+      end
+    end
   end
 
   describe 'associations' do

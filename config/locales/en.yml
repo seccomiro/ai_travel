@@ -192,6 +192,22 @@ en:
     share_social: "Share on Social Media"
     access_denied: "Access denied"
 
+    sidebar:
+      dates: "Dates"
+      route: "Route"
+      travelers: "Travelers"
+      budget: "Budget"
+      interests: "Interests"
+      activities: "Activities"
+      trip_type: "Trip Type"
+      pace: "Pace"
+      categories: "Categories"
+      must_do: "Must Do"
+      things_to_avoid: "Things to Avoid"
+      dietary: "Dietary"
+      accessibility: "Accessibility"
+      notes: "Notes"
+
   # Messages
   messages:
     welcome: "Welcome to Tripyo!"
