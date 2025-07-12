@@ -103,6 +103,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
+    csv (3.3.5)
     database_cleaner-active_record (2.2.1)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
@@ -155,6 +156,10 @@ GEM
       retriable (~> 2.0)
     hashdiff (1.2.0)
     hashie (5.0.0)
+    httparty (0.23.1)
+      csv
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     hurley (0.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -508,6 +513,7 @@ DEPENDENCIES
   faraday
   faraday-retry
   google_maps_service
+  httparty
   importmap-rails
   jbuilder
   kamal

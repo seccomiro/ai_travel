@@ -1,7 +1,7 @@
 class TripsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status, :latest_route]
-  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status, :latest_route]
+  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route]
+  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route]
 
   def index
     @trips = current_user.trips.recent
@@ -55,6 +55,30 @@ class TripsController < ApplicationController
 
   def latest_route
     render json: @trip.trip_data['latest_route']
+  end
+
+  def optimize_route
+    segments = params[:segments]
+    user_preferences = params[:user_preferences] || {}
+
+    if segments.blank?
+      render json: { error: 'No segments provided' }, status: :bad_request
+      return
+    end
+
+    begin
+      optimization_service = RouteOptimizationService.new(@trip)
+      optimized_route = optimization_service.calculate_optimized_route(segments, user_preferences)
+
+      render json: {
+        success: true,
+        route: optimized_route,
+        message: "Route optimized successfully with #{optimized_route[:segments].length} segments"
+      }
+    rescue => e
+      Rails.logger.error "Route optimization failed: #{e.message}"
+      render json: { error: "Route optimization failed: #{e.message}" }, status: :internal_server_error
+    end
   end
 
   private

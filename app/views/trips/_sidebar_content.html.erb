@@ -78,11 +78,19 @@
           <% if trip.trip_data['current_route'].present? %>
             <dt class="col-sm-4"><%= t('trips.sidebar.route') %></dt>
             <dd class="col-sm-8">
-              <% destinations = trip.trip_data.dig('current_route', 'destinations') %>
-              <% if destinations.present? %>
-                <%= destinations.first %> → <%= destinations.last %>
-                <% if destinations.length > 2 %>
-                  <small class="text-muted d-block">via <%= destinations[1..-2].join(', ') %></small>
+              <% route = trip.trip_data['current_route'] %>
+              <% if route['segments'].present? %>
+                <% segments = route['segments'] %>
+                <%= segments.first['origin'] %> → <%= segments.last['destination'] %>
+                <% if segments.length > 1 %>
+                  <small class="text-muted d-block">
+                    <%= segments.length %> segments • <%= route.dig('summary', 'total_distance_km')&.round %>km • <%= route.dig('summary', 'total_duration_hours')&.round %>h
+                  </small>
+                <% end %>
+                <% if route['warnings'].present? %>
+                  <div class="alert alert-warning alert-sm mt-2">
+                    <small><i class="bi bi-exclamation-triangle"></i> Route has warnings</small>
+                  </div>
                 <% end %>
               <% end %>
             </dd>

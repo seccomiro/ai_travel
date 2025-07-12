@@ -15,10 +15,23 @@ class ChatResponseService
       if ai_result[:tool_calls].present?
         handle_tool_calls(ai_result, messages)
       else
-        create_assistant_message(ai_result[:content], {
-                                   usage: ai_result[:usage],
-                                   model: OpenaiChatService::DEFAULT_MODEL,
-                                 })
+        # Check if we need to auto-calculate a route
+        auto_route_result = check_and_auto_calculate_route(user_message, ai_result)
+
+        if auto_route_result
+          # Create a message with the auto-calculated route
+          create_assistant_message(auto_route_result[:message], {
+            usage: ai_result[:usage],
+            model: OpenaiChatService::DEFAULT_MODEL,
+            auto_calculated_route: true,
+            route: auto_route_result[:route]
+          })
+        else
+          create_assistant_message(ai_result[:content], {
+            usage: ai_result[:usage],
+            model: OpenaiChatService::DEFAULT_MODEL,
+          })
+        end
       end
     else
       create_fallback_message
@@ -131,6 +144,17 @@ class ChatResponseService
       content: "Sorry, I'm having trouble connecting to the AI right now. Please try again later.",
       metadata: { error: true }
     )
+  end
+
+  def check_and_auto_calculate_route(user_message, ai_result)
+    auto_service = AutoRouteCalculationService.new(@chat_session)
+
+    if auto_service.should_auto_calculate?(user_message, ai_result)
+      Rails.logger.info "Auto-calculating route for user message"
+      auto_service.auto_calculate_route(user_message)
+    else
+      nil
+    end
   end
 
   def update_trip_from_conversation(_user_message, _ai_response)

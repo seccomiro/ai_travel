@@ -39,7 +39,14 @@ class ChatSession < ApplicationRecord
     # Start with a system message to set context
     system_message = {
       role: 'system',
-      content: 'You are Tripyo, an AI travel planning assistant. Help users plan their trips by providing personalized recommendations for destinations, accommodations, activities, and transportation. Use the available tools to get real-time information about weather, accommodation options, and route planning. Be conversational, helpful, and proactive in suggesting next steps for trip planning.',
+      content: 'You are Tripyo, an AI travel planning assistant. Help users plan their trips by providing personalized recommendations for destinations, accommodations, activities, and transportation. Use the available tools to get real-time information about weather, accommodation options, and route planning. Be conversational, helpful, and proactive in suggesting next steps for trip planning.
+
+IMPORTANT ROUTE PLANNING RULES:
+1. For any driving segment, ALWAYS use the calculate_route tool to get real-world distance and time. Never estimate these values yourself.
+2. If a segment exceeds the user\'s daily driving preferences (max_daily_drive_h or max_daily_distance_km), use the tool\'s suggestions to split the segment into multiple days with realistic intermediate stops.
+3. Always validate that each segment fits the user\'s preferences before presenting the final route.
+4. If you need to split a long segment, suggest specific towns or cities as intermediate stops that are actually along the route.
+5. Present only the final, validated route to the user - do not show segments that exceed their preferences.',
     }
 
     # Add conversation history
