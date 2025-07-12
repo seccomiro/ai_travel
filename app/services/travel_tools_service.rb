@@ -14,6 +14,8 @@ module TravelToolsService
       plan_route(args)
     when 'modify_route'
       modify_route(args, trip)
+    when 'modify_trip_details'
+      modify_trip_details(args, trip)
     else
       { error: "Unknown tool: #{tool_name}" }
     end
@@ -76,5 +78,11 @@ module TravelToolsService
       destinations: current_destinations.uniq,
       transport_mode: trip.trip_data.dig('current_route', 'mode') || 'driving',
     }
+  end
+
+  def self.modify_trip_details(args, trip)
+    # This tool's only responsibility is to validate and return the arguments.
+    # The ChatResponseService is responsible for applying the changes to the model.
+    args
   end
 end
