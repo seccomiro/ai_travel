@@ -42,7 +42,11 @@
         </div>
 
         <!-- Trip Details -->
-        <div id="trip-sidebar" class="flex-grow-1 p-3 overflow-auto">
+        <div id="trip-sidebar"
+             class="flex-grow-1 p-3 overflow-auto"
+             data-controller="trip-sidebar"
+             data-trip-sidebar-trip-id-value="<%= @trip.id %>"
+             data-trip-sidebar-last-update-value="<%= @trip.updated_at.iso8601 %>">
           <%= render 'trips/sidebar_content', trip: @trip %>
         </div>
 
@@ -80,5 +84,27 @@
     if (chatMessages) {
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+  });
+
+  // Debug Turbo Stream events
+  document.addEventListener('turbo:before-stream-render', function(event) {
+    console.log('Turbo Stream before render:', event.detail);
+  });
+
+  document.addEventListener('turbo:stream-render', function(event) {
+    console.log('Turbo Stream rendered:', event.detail);
+  });
+
+  // Debug sidebar updates specifically
+  document.addEventListener('turbo:frame-load', function(event) {
+    if (event.target.id === 'trip-sidebar') {
+      console.log('Sidebar updated via Turbo Stream');
+      console.log('New sidebar content:', event.target.innerHTML);
+    }
+  });
+
+  // Monitor for any JavaScript errors
+  window.addEventListener('error', function(event) {
+    console.error('JavaScript error:', event.error);
   });
 </script>

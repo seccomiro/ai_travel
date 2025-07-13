@@ -40,6 +40,7 @@ gem 'redis'
 # HTTP Client
 gem 'faraday'
 gem 'faraday-retry'
+gem 'httparty'
 
 # Internationalization
 gem 'rails-i18n'

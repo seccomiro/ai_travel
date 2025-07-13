@@ -14,6 +14,11 @@ module TravelToolsService
       plan_route(args)
     when 'modify_route'
       modify_route(args, trip)
+    when 'modify_trip_details'
+      modify_trip_details(args, trip)
+    when 'optimize_route'
+      optimize_route(args, trip)
+
     else
       { error: "Unknown tool: #{tool_name}" }
     end
@@ -77,4 +82,16 @@ module TravelToolsService
       transport_mode: trip.trip_data.dig('current_route', 'mode') || 'driving',
     }
   end
+
+  def self.modify_trip_details(args, trip)
+    tool = AITools::ModifyTripDetailsTool.new(trip)
+    tool.call(args)
+  end
+
+  def self.optimize_route(args, trip)
+    tool = AITools::OptimizeRouteTool.new(trip)
+    tool.execute(args)
+  end
+
+
 end

@@ -7,6 +7,7 @@ class Trip < ApplicationRecord
   validates :title, presence: true, length: { maximum: 255 }
   validates :status, inclusion: { in: %w[planning active completed cancelled] }
   validates :start_date, :end_date, presence: true, if: :dates_required?
+  validates :origin, :destination, presence: true, if: :dates_required?
   validate :end_date_after_start_date, if: :both_dates_present?
 
   attribute :trip_data, :json, default: {}
