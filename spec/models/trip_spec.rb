@@ -24,7 +24,8 @@ RSpec.describe Trip, type: :model do
 
     it 'is invalid with invalid status' do
       trip = build(:trip)
-      expect { trip.status = 'invalid_status' }.to raise_error(ArgumentError)
+      expect { trip.status = 'invalid_status' }.not_to raise_error
+      expect(trip).to_not be_valid
     end
 
     it 'validates end_date is after start_date' do
@@ -56,8 +57,8 @@ RSpec.describe Trip, type: :model do
     let!(:planning_trip) { create(:trip, user: user, status: 'planning') }
     let!(:active_trip) { create(:trip, user: user, status: 'active') }
     let!(:completed_trip) { create(:trip, user: user, status: 'completed') }
-    let!(:public_trip) { create(:trip, user: user, status: 'active', is_public: true) }
-    let!(:private_trip) { create(:trip, user: user, status: 'completed', is_public: false) }
+    let!(:public_trip) { create(:trip, user: user, status: 'active', public_trip: true) }
+    let!(:private_trip) { create(:trip, user: user, status: 'completed', public_trip: false) }
 
     describe '.planning' do
       it 'returns only planning trips' do
@@ -156,18 +157,18 @@ RSpec.describe Trip, type: :model do
       end
     end
 
-    describe '#is_current?' do
+    describe '#current?' do
       it 'returns true for active trips' do
         trip.status = 'active'
-        expect(trip.is_current?).to be true
+        expect(trip.current?).to be true
       end
 
       it 'returns false for non-active trips' do
         trip.status = 'planning'
-        expect(trip.is_current?).to be false
+        expect(trip.current?).to be false
 
         trip.status = 'completed'
-        expect(trip.is_current?).to be false
+        expect(trip.current?).to be false
       end
     end
 
@@ -178,7 +179,7 @@ RSpec.describe Trip, type: :model do
 
         expect(trip.trip_data).to eq({
           'existing' => 'value',
-          'new_key' => 'new_value'
+          'new_key' => 'new_value',
         })
       end
 
@@ -196,6 +197,35 @@ RSpec.describe Trip, type: :model do
         expect(trip.trip_data['key']).to eq('new_value')
       end
     end
+
+    describe '#active_chat_session' do
+      it 'returns the first active chat session' do
+        active_session = create(:chat_session, trip: trip, status: 'active')
+        create(:chat_session, trip: trip, status: 'completed')
+
+        expect(trip.active_chat_session).to eq(active_session)
+      end
+
+      it 'returns nil when no active chat sessions' do
+        create(:chat_session, trip: trip, status: 'completed')
+
+        expect(trip.active_chat_session).to be_nil
+      end
+    end
+
+    describe '#has_active_chat_session?' do
+      it 'returns true when trip has active chat session' do
+        create(:chat_session, trip: trip, status: 'active')
+
+        expect(trip.has_active_chat_session?).to be true
+      end
+
+      it 'returns false when trip has no active chat session' do
+        create(:chat_session, trip: trip, status: 'completed')
+
+        expect(trip.has_active_chat_session?).to be false
+      end
+    end
   end
 
   describe 'default values' do
@@ -206,11 +236,11 @@ RSpec.describe Trip, type: :model do
       expect(trip.status).to eq('planning')
     end
 
-    it 'sets default is_public to false' do
+    it 'sets default public_trip? to false' do
       user = create(:user)
       trip = Trip.new(user: user, title: 'Test Trip')
       trip.save
-      expect(trip.is_public).to be false
+      expect(trip.public_trip?).to be false
     end
 
     it 'initializes empty trip_data hash' do

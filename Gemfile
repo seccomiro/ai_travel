@@ -76,9 +76,11 @@ group :development, :test do
   # RSpec testing framework
   gem 'rspec-rails'
   gem 'factory_bot_rails'
+  gem 'faker'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'vcr'
+  gem 'database_cleaner-active_record'
 end
 
 group :development do

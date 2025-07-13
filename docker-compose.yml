@@ -102,4 +102,4 @@ volumes:
   postgres_data:
   redis_data:
   bundle_cache:
-  node_modules: 
+  node_modules:
