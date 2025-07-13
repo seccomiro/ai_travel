@@ -1,6 +1,6 @@
 module AITools
   class SearchAccommodationTool < BaseTool
-    def self.definition
+    def definition
       {
         type: 'function',
         function: {
