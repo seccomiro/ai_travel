@@ -79,10 +79,38 @@ export default class extends Controller {
   }
 
   async drawRoute(routeData) {
-    if (!routeData.destinations || routeData.destinations.length < 2) {
-      console.log("🗺️ Insufficient destination data to draw route.");
+    // Handle both old format (destinations) and new format (segments)
+    let destinations = [];
+
+    if (routeData.destinations && routeData.destinations.length >= 2) {
+      // Old format with destinations array
+      destinations = routeData.destinations;
+    } else if (routeData.segments && routeData.segments.length > 0) {
+      // New format with segments - extract unique destinations
+      const uniqueDestinations = new Set();
+
+      routeData.segments.forEach(segment => {
+        if (segment.origin) uniqueDestinations.add(segment.origin);
+        if (segment.destination) uniqueDestinations.add(segment.destination);
+      });
+
+      destinations = Array.from(uniqueDestinations);
+
+      // If we have valid segments, use the first and last as origin/destination
+      const validSegments = routeData.segments.filter(s => s.valid);
+      if (validSegments.length >= 2) {
+        destinations = [
+          validSegments[0].origin || validSegments[0].destination,
+          ...validSegments.slice(1, -1).map(s => s.destination || s.origin),
+          validSegments[validSegments.length - 1].destination || validSegments[validSegments.length - 1].origin
+        ].filter(Boolean);
+      }
+    }
+
+    if (destinations.length < 2) {
+      console.log("🗺️ Insufficient destination data to draw route:", routeData);
       return;
-    };
+    }
 
     console.log("🗺️ Importing Routes library...");
     const { DirectionsService, DirectionsRenderer } = await google.maps.importLibrary("routes");
@@ -91,12 +119,12 @@ export default class extends Controller {
     const directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(this.map);
 
-    const travelMode = this.getGoogleTravelMode(routeData.mode);
+    const travelMode = this.getGoogleTravelMode(routeData.mode || 'driving');
 
     const request = {
-      origin: routeData.destinations[0],
-      destination: routeData.destinations[routeData.destinations.length - 1],
-      waypoints: routeData.destinations.slice(1, -1).map(location => ({ location, stopover: true })),
+      origin: destinations[0],
+      destination: destinations[destinations.length - 1],
+      waypoints: destinations.slice(1, -1).map(location => ({ location, stopover: true })),
       travelMode: travelMode,
     };
 
@@ -118,4 +146,4 @@ export default class extends Controller {
       console.error(`Directions request failed: ${e}`);
     }
   }
-} 
+}

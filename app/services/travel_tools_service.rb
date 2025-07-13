@@ -16,6 +16,9 @@ module TravelToolsService
       modify_route(args, trip)
     when 'modify_trip_details'
       modify_trip_details(args, trip)
+    when 'optimize_route'
+      optimize_route(args, trip)
+
     else
       { error: "Unknown tool: #{tool_name}" }
     end
@@ -81,8 +84,14 @@ module TravelToolsService
   end
 
   def self.modify_trip_details(args, trip)
-    # This tool's only responsibility is to validate and return the arguments.
-    # The ChatResponseService is responsible for applying the changes to the model.
-    args
+    tool = AITools::ModifyTripDetailsTool.new(trip)
+    tool.call(args)
   end
+
+  def self.optimize_route(args, trip)
+    tool = AITools::OptimizeRouteTool.new(trip)
+    tool.execute(args)
+  end
+
+
 end

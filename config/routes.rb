@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       patch :update_status
       get :latest_route
       post :optimize_route
+      get :sidebar_content
     end
 
     resources :chat_sessions, only: [:show, :create] do

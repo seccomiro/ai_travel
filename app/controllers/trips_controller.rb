@@ -1,7 +1,7 @@
 class TripsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route]
-  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route]
+  before_action :set_trip, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route, :sidebar_content]
+  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :update_status, :latest_route, :optimize_route, :sidebar_content]
 
   def index
     @trips = current_user.trips.recent
@@ -79,6 +79,11 @@ class TripsController < ApplicationController
       Rails.logger.error "Route optimization failed: #{e.message}"
       render json: { error: "Route optimization failed: #{e.message}" }, status: :internal_server_error
     end
+  end
+
+  def sidebar_content
+    # Return just the sidebar content for AJAX updates
+    render partial: 'trips/sidebar_content', locals: { trip: @trip }, layout: false
   end
 
   private

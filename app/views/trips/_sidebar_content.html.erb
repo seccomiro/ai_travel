@@ -16,7 +16,14 @@
           <div class="border rounded p-2">
             <h6 class="text-muted mb-0"><%= t('trips.segments') %></h6>
             <span class="fs-5 fw-bold" id="trip-segments-count">
-              <%= trip.trip_data.dig('current_route', 'destinations')&.length || 0 %>
+              <% route = trip.trip_data.dig('current_route') %>
+              <% if route&.dig('segments') %>
+                <%= route['segments'].length %>
+              <% elsif route&.dig('destinations') %>
+                <%= route['destinations'].length %>
+              <% else %>
+                0
+              <% end %>
             </span>
           </div>
         </div>
@@ -47,6 +54,21 @@
       ></div>
     </div>
   </div>
+
+  <!-- Route Breakdown Progress -->
+  <% if trip.trip_data&.dig('route_breakdown_in_progress') %>
+    <div class="alert alert-info" id="route-breakdown-progress">
+      <div class="d-flex align-items-center">
+        <div class="spinner-border spinner-border-sm me-2" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div>
+          <strong>Breaking down route segments...</strong>
+          <div class="small text-muted">Splitting long segments into manageable daily drives</div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
   <!-- Trip Details -->
   <div class="card">
@@ -81,12 +103,26 @@
               <% route = trip.trip_data['current_route'] %>
               <% if route['segments'].present? %>
                 <% segments = route['segments'] %>
-                <%= segments.first['origin'] %> → <%= segments.last['destination'] %>
-                <% if segments.length > 1 %>
+                <% valid_segments = segments.select { |s| s['valid'] } %>
+                <% invalid_segments = segments.reject { |s| s['valid'] } %>
+
+                <% if valid_segments.any? %>
+                  <% first_segment = valid_segments.first %>
+                  <% last_segment = valid_segments.last %>
+                  <%= first_segment['origin'] || 'Start' %> → <%= last_segment['destination'] || 'End' %>
+                  <small class="text-muted d-block">
+                    <%= segments.length %> segments • <%= route.dig('summary', 'total_distance_km')&.round %>km • <%= route.dig('summary', 'total_duration_hours')&.round %>h
+                    <% if invalid_segments.any? %>
+                      <br><span class="text-warning"><%= invalid_segments.length %> segments exceed daily limits</span>
+                    <% end %>
+                  </small>
+                <% else %>
+                  <span class="text-muted">Route segments calculated</span>
                   <small class="text-muted d-block">
                     <%= segments.length %> segments • <%= route.dig('summary', 'total_distance_km')&.round %>km • <%= route.dig('summary', 'total_duration_hours')&.round %>h
                   </small>
                 <% end %>
+
                 <% if route['warnings'].present? %>
                   <div class="alert alert-warning alert-sm mt-2">
                     <small><i class="bi bi-exclamation-triangle"></i> Route has warnings</small>

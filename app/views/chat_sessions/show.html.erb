@@ -42,7 +42,11 @@
         </div>
 
         <!-- Trip Details -->
-        <div id="trip-sidebar" class="flex-grow-1 p-3 overflow-auto">
+        <div id="trip-sidebar"
+             class="flex-grow-1 p-3 overflow-auto"
+             data-controller="trip-sidebar"
+             data-trip-sidebar-trip-id-value="<%= @trip.id %>"
+             data-trip-sidebar-last-update-value="<%= @trip.updated_at.iso8601 %>">
           <%= render 'trips/sidebar_content', trip: @trip %>
         </div>
 

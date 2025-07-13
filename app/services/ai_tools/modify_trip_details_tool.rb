@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AITools
   class ModifyTripDetailsTool < BaseTool
     def definition
@@ -5,199 +7,113 @@ module AITools
         type: 'function',
         function: {
           name: 'modify_trip_details',
-          description: 'Modify the details of the current trip plan. Use this to update trip attributes, preferences, and structured data based on user requests.',
+          description: 'Modify trip details such as title, description, start date, end date, and other trip metadata',
           parameters: {
             type: 'object',
             properties: {
-              # Native trip attributes
               title: {
                 type: 'string',
-                description: 'The new title for the trip.',
+                description: 'The title of the trip'
               },
               description: {
                 type: 'string',
-                description: 'A new description for the trip.',
+                description: 'A detailed description of the trip'
               },
               start_date: {
                 type: 'string',
-                description: 'The new start date for the trip, in YYYY-MM-DD format.',
+                format: 'date',
+                description: 'The start date of the trip (YYYY-MM-DD)'
               },
               end_date: {
                 type: 'string',
-                description: 'The new end date for the trip, in YYYY-MM-DD format.',
+                format: 'date',
+                description: 'The end date of the trip (YYYY-MM-DD)'
               },
-
-              # Trip metadata
-              trip_type: {
-                type: 'string',
-                enum: ['one_way', 'round_trip', 'multi_city', 'road_trip'],
-                description: 'The overall nature of the trip\'s geography.',
+              is_public: {
+                type: 'boolean',
+                description: 'Whether the trip should be public or private'
               },
-              pace: {
-                type: 'string',
-                enum: ['relaxed', 'moderate', 'fast_paced', 'packed'],
-                description: 'The desired intensity of the trip.',
-              },
-
-              # Participants
-              group_composition: {
+              trip_data: {
                 type: 'object',
-                description: 'Detailed breakdown of the travel party.',
-                properties: {
-                  adults: { type: 'integer', description: 'Number of adults (18+).' },
-                  children: {
-                    type: 'array',
-                    items: { type: 'object', properties: { age: { type: 'integer' } } },
-                    description: 'List of children by age.'
-                  },
-                  infants: { type: 'integer', description: 'Number of infants (< 2).' },
-                  pets: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        type: { type: 'string' },
-                        size: { type: 'string' }
-                      }
-                    },
-                    description: 'Details about any accompanying pets.'
-                  }
-                }
-              },
-
-              # Transportation
-              primary_mode: {
-                type: 'string',
-                enum: ['car', 'rv', 'plane', 'train', 'bicycle', 'motorcycle'],
-                description: 'The main method of transport.',
-              },
-              route_preferences: {
-                type: 'object',
-                description: 'Preferences for road travel.',
-                properties: {
-                  avoid: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Things to avoid (e.g., "tolls", "dirt_roads").'
-                  },
-                  prefer: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Things to prefer (e.g., "scenic_routes").'
-                  },
-                  max_daily_drive_h: {
-                    type: 'integer',
-                    description: 'Max hours to drive in a single day.'
-                  }
-                }
-              },
-
-              # Lodging
-              preferred_types: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'List of acceptable lodging types (e.g., "hotel", "vacation_rental", "camping").',
-              },
-              lodging_preferences: {
-                type: 'object',
-                description: 'Specific requirements for lodging.',
-                properties: {
-                  min_rating: { type: 'number', description: 'Minimum review score.' },
-                  amenities: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Must-have amenities (e.g., "wifi", "pool").'
-                  },
-                  proximity_to: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Desired location characteristics (e.g., "city_center", "beach").'
-                  }
-                }
-              },
-
-              # Interests & Activities
-              categories: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Broad areas of interest (e.g., "nature", "history", "gastronomy").',
-              },
-              specific_interests: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Granular hobbies or activities (e.g., "hiking", "wine_tasting", "museums").',
-              },
-              must_do: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Non-negotiable activities or sights.',
-              },
-              things_to_avoid: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Known dislikes or things to skip (e.g., "crowded_places", "tourist_traps").',
-              },
-
-              # Budget & Finance
-              budget_profile: {
-                type: 'string',
-                enum: ['budget', 'mid-range', 'luxury'],
-                description: 'General spending level for the trip.',
-              },
-              total_budget: {
-                type: 'integer',
-                description: 'The overall maximum budget for the trip.',
-              },
-              currency: {
-                type: 'string',
-                description: 'The currency for all financial figures (ISO 4217, e.g., "USD").',
-              },
-
-              # Special Requirements
-              dietary: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Food allergies or dietary needs (e.g., "vegetarian", "gluten_free").',
-              },
-              accessibility: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Physical accessibility requirements (e.g., "wheelchair_access").',
-              },
-
-              # Dynamic Data
-              ai_notes: {
-                type: 'object',
-                description: 'Key-value pairs inferred by the AI during conversation.',
-              },
-              user_notes: {
-                type: 'string',
-                description: 'A freeform text field for the user\'s own notes.',
-              },
-
-              # Legacy fields for backward compatibility
-              interests: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'An array of interests for the trip (legacy field).',
-              },
-              activities: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'An array of specific activities or places to visit (legacy field).',
-              },
-              budget: {
-                type: 'string',
-                description: 'The budget for the trip (legacy field, e.g., "economy", "standard", "luxury").',
-              },
-              travelers: {
-                type: 'string',
-                description: 'The type of travelers (legacy field, e.g., "solo", "couple", "family with kids").',
+                description: 'Additional trip metadata to store'
               }
-            },
-          },
-        },
+            }
+          }
+        }
       }
+    end
+
+    def call(args)
+      Rails.logger.info "Modifying trip details: #{args.inspect}"
+
+      # Validate and clean the arguments
+      cleaned_args = clean_arguments(args)
+
+      # Update the trip with the new details
+      if @trip.update(cleaned_args)
+        {
+          success: true,
+          message: 'Trip details updated successfully',
+          updated_fields: cleaned_args.keys,
+          trip_id: @trip.id
+        }
+      else
+        {
+          success: false,
+          error: 'Failed to update trip details',
+          validation_errors: @trip.errors.full_messages
+        }
+      end
+    rescue => e
+      Rails.logger.error "Error modifying trip details: #{e.message}"
+      {
+        success: false,
+        error: "Failed to modify trip details: #{e.message}"
+      }
+    end
+
+    private
+
+    def clean_arguments(args)
+      cleaned = {}
+
+      # Handle native trip attributes
+      if args['title'].present?
+        cleaned[:title] = args['title'].strip
+      end
+
+      if args['description'].present?
+        cleaned[:description] = args['description'].strip
+      end
+
+      if args['start_date'].present?
+        begin
+          cleaned[:start_date] = Date.parse(args['start_date'])
+        rescue Date::Error
+          Rails.logger.warn "Invalid start_date format: #{args['start_date']}"
+        end
+      end
+
+      if args['end_date'].present?
+        begin
+          cleaned[:end_date] = Date.parse(args['end_date'])
+        rescue Date::Error
+          Rails.logger.warn "Invalid end_date format: #{args['end_date']}"
+        end
+      end
+
+      if args.key?('is_public')
+        cleaned[:public_trip] = args['is_public']
+      end
+
+      # Handle trip_data (additional metadata)
+      if args['trip_data'].present?
+        current_trip_data = @trip.trip_data || {}
+        updated_trip_data = current_trip_data.merge(args['trip_data'])
+        cleaned[:trip_data] = updated_trip_data
+      end
+
+      cleaned
     end
   end
 end

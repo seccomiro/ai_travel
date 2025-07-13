@@ -2,7 +2,7 @@ require 'openai'
 require_dependency 'ai_tools_registry'
 
 class OpenaiChatService
-  DEFAULT_MODEL = 'gpt-4o' # or "gpt-4-turbo-preview" if preferred
+  DEFAULT_MODEL = 'gpt-4o' # Using a more reliable model for function calling
   DEFAULT_TEMPERATURE = 0.7
 
   def initialize(api_key: Rails.application.credentials.open_ai_api_key, client: nil)
@@ -16,8 +16,11 @@ class OpenaiChatService
       messages: messages,
       temperature: temperature,
     }
-    params[:tools] = AIToolsRegistry.new(trip).definitions if tools
-    params[:tool_choice] = 'auto' if tools
+    if tools
+      params[:tools] = AIToolsRegistry.new(trip).definitions
+      params[:tool_choice] = 'required'
+      Rails.logger.info "Providing #{params[:tools].length} tools to AI with required tool choice"
+    end
 
     response = @client.chat(parameters: params)
     if response.dig('choices', 0, 'message', 'content') || response.dig('choices', 0, 'message', 'tool_calls')

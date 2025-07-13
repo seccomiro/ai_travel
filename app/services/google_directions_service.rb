@@ -10,6 +10,17 @@ class GoogleDirectionsService
 
   # Calculate route between two points
   def calculate_route(origin, destination, options = {})
+    # Validate input parameters
+    if origin.blank?
+      Rails.logger.error "Google Directions API called with empty origin parameter"
+      return { error: "Missing origin parameter. Please provide a starting location." }
+    end
+
+    if destination.blank?
+      Rails.logger.error "Google Directions API called with empty destination parameter"
+      return { error: "Missing destination parameter. Please provide an ending location." }
+    end
+
     params = {
       origin: origin,
       destination: destination,
@@ -25,10 +36,29 @@ class GoogleDirectionsService
     response = HTTParty.get(@base_url, query: params)
 
     if response.success?
-      parse_directions_response(response.parsed_response)
+      parsed_response = response.parsed_response
+
+      # Check for API key restrictions
+      if parsed_response['status'] == 'REQUEST_DENIED'
+        error_message = parsed_response['error_message'] || 'API request denied'
+        Rails.logger.error "Google Directions API key restriction: #{error_message}"
+        return {
+          error: "Google Maps API key has restrictions. Please configure the API key to allow server-side requests.",
+          details: error_message
+        }
+      end
+
+      # Check for other API errors
+      if parsed_response['status'] != 'OK'
+        error_message = parsed_response['error_message'] || "API returned status: #{parsed_response['status']}"
+        Rails.logger.error "Google Directions API error: #{error_message}"
+        return { error: "Google Maps API error: #{error_message}" }
+      end
+
+      parse_directions_response(parsed_response)
     else
-      Rails.logger.error "Google Directions API error: #{response.code} - #{response.body}"
-      { error: "Failed to calculate route: #{response.code}" }
+      Rails.logger.error "Google Directions API HTTP error: #{response.code} - #{response.body}"
+      { error: "Failed to calculate route: HTTP #{response.code}" }
     end
   rescue => e
     Rails.logger.error "Google Directions API exception: #{e.message}"
@@ -63,10 +93,11 @@ class GoogleDirectionsService
 
   # Validate if a route segment is realistic based on user preferences
   def validate_segment(route_data, user_preferences = {})
-    max_daily_drive_h = user_preferences[:max_daily_drive_h] || 8
-    max_daily_distance_km = user_preferences[:max_daily_distance_km] || 800
+    max_daily_drive_h = user_preferences[:max_daily_drive_h]
+    max_daily_distance_km = user_preferences[:max_daily_distance_km]
 
     return { valid: true } unless route_data[:legs]&.any?
+    return { valid: true } unless max_daily_drive_h || max_daily_distance_km
 
     leg = route_data[:legs].first
     drive_hours = leg[:duration_hours]
@@ -91,10 +122,11 @@ class GoogleDirectionsService
 
   # Suggest how to split a long route into multiple days
   def suggest_route_splits(route_data, user_preferences = {})
-    max_daily_drive_h = user_preferences[:max_daily_drive_h] || 8
-    max_daily_distance_km = user_preferences[:max_daily_distance_km] || 800
+    max_daily_drive_h = user_preferences[:max_daily_drive_h]
+    max_daily_distance_km = user_preferences[:max_daily_distance_km]
 
     return [] unless route_data[:legs]&.any?
+    return [] unless max_daily_drive_h || max_daily_distance_km
 
     leg = route_data[:legs].first
     total_hours = leg[:duration_hours]
@@ -126,17 +158,17 @@ class GoogleDirectionsService
     return { error: 'No routes found' } if response['routes'].blank?
 
     route = response['routes'].first
-    legs = route['legs']
+    legs = route['legs'] || []
 
     {
       status: response['status'],
       route_id: SecureRandom.uuid,
       legs: legs.map { |leg| parse_leg(leg) },
-      total_distance_km: legs.sum { |leg| leg['distance']['value'] } / 1000.0,
-      total_duration_hours: legs.sum { |leg| leg['duration']['value'] } / 3600.0,
+      total_distance_km: legs.sum { |leg| leg['distance']['value'].to_f / 1000 },
+      total_duration_hours: legs.sum { |leg| leg['duration']['value'].to_f / 3600 },
       polyline: route['overview_polyline']['points'],
       bounds: route['bounds'],
-      warnings: response['geocoded_waypoints']&.select { |wp| wp['geocoder_status'] != 'OK' }&.map { |wp| wp['geocoder_status'] } || []
+      warnings: response['warnings'] || []
     }
   end
 
@@ -144,9 +176,9 @@ class GoogleDirectionsService
     {
       origin: leg['start_address'],
       destination: leg['end_address'],
-      distance_km: leg['distance']['value'] / 1000.0,
+      distance_km: leg['distance']['value'].to_f / 1000,
       distance_text: leg['distance']['text'],
-      duration_hours: leg['duration']['value'] / 3600.0,
+      duration_hours: leg['duration']['value'].to_f / 3600,
       duration_text: leg['duration']['text'],
       steps: leg['steps']&.map { |step| parse_step(step) } || []
     }
@@ -155,10 +187,9 @@ class GoogleDirectionsService
   def parse_step(step)
     {
       instruction: step['html_instructions'],
-      distance_km: step['distance']['value'] / 1000.0,
-      duration_hours: step['duration']['value'] / 3600.0,
-      travel_mode: step['travel_mode'],
-      polyline: step['polyline']['points']
+      distance: step['distance']['text'],
+      duration: step['duration']['text'],
+      travel_mode: step['travel_mode']
     }
   end
 
@@ -167,26 +198,22 @@ class GoogleDirectionsService
 
     leg = route_data[:legs].first
     total_distance = leg[:distance_km]
-    total_hours = leg[:duration_hours]
+    total_duration = leg[:duration_hours]
 
-    # Find major cities/towns along the route
-    # This is a simplified approach - in practice, you'd want to use a geocoding service
-    # to find actual towns along the route
-    waypoints = []
+    # For now, return simple equidistant stops
+    # In a real implementation, you would use Google Places API to find actual cities/towns
+    stops = []
+    distance_per_day = total_distance / days_needed
+    duration_per_day = total_duration / days_needed
 
     (1...days_needed).each do |day|
-      progress_ratio = day.to_f / days_needed
-      estimated_distance = total_distance * progress_ratio
-      estimated_hours = total_hours * progress_ratio
-
-      # Find a reasonable stopping point (this would need geocoding integration)
-      waypoints << {
+      stops << {
         location: "Intermediate stop #{day}",
-        distance_from_origin: estimated_distance,
-        hours_from_origin: estimated_hours
+        distance_from_origin: distance_per_day * day,
+        hours_from_origin: duration_per_day * day
       }
     end
 
-    waypoints
+    stops
   end
 end

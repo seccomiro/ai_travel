@@ -64,7 +64,30 @@ module AITools
       segments = args['segments']
       user_preferences = args['user_preferences'] || {}
 
+      if segments.blank? || !segments.is_a?(Array) || segments.empty?
+        Rails.logger.error "No route segments provided to OptimizeRouteTool"
+        return {
+          success: false,
+          error: "Cannot calculate route: No route segments provided. Please specify at least one segment with origin and destination."
+        }
+      end
+
       Rails.logger.info "Optimizing route for #{segments.length} segments"
+
+      # Validate segments before processing
+      invalid_segments = segments.select do |seg|
+        origin = seg['origin'] || seg[:origin]
+        destination = seg['destination'] || seg[:destination]
+        origin.blank? || destination.blank?
+      end
+
+      if invalid_segments.any?
+        Rails.logger.error "Found segments with empty origin or destination: #{invalid_segments}"
+        return {
+          success: false,
+          error: "Cannot calculate route: Some segments have missing origin or destination. Please provide complete location information for all route segments."
+        }
+      end
 
       # Initialize the route optimization service
       optimization_service = RouteOptimizationService.new(@trip)
@@ -107,7 +130,8 @@ module AITools
 
       # Check for overall trip intensity
       summary = optimized_route[:summary]
-      if summary[:total_duration_hours] > 56 # More than 7 days of driving
+      # Check if the trip is too long
+      if summary[:total_duration_hours] && summary[:total_duration_hours] > 56 # More than 7 days of driving
         recommendations << {
           type: 'trip_too_intensive',
           message: "This trip involves #{summary[:total_duration_hours].round(1)} hours of driving. Consider extending your trip duration or reducing destinations.",
