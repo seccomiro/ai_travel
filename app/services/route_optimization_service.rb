@@ -46,11 +46,14 @@ class RouteOptimizationService
 
   def extract_user_preferences(user_preferences)
     trip_data = @trip.trip_data || {}
-
+    
+    # Handle both symbol and string keys
+    prefs = user_preferences || {}
+    
     {
-      max_daily_drive_h: user_preferences[:max_daily_drive_h] || trip_data.dig('route_preferences', 'max_daily_drive_h'),
-      max_daily_distance_km: user_preferences[:max_daily_distance_km] || trip_data.dig('route_preferences', 'max_daily_distance_km'),
-      avoid: user_preferences[:avoid] || trip_data.dig('route_preferences', 'avoid') || []
+      max_daily_drive_h: prefs[:max_daily_drive_h] || prefs['max_daily_drive_h'] || trip_data.dig('route_preferences', 'max_daily_drive_h'),
+      max_daily_distance_km: prefs[:max_daily_distance_km] || prefs['max_daily_distance_km'] || trip_data.dig('route_preferences', 'max_daily_distance_km'),
+      avoid: prefs[:avoid] || prefs['avoid'] || trip_data.dig('route_preferences', 'avoid') || []
     }
   end
 

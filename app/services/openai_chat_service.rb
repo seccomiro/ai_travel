@@ -18,6 +18,7 @@ class OpenaiChatService
     }
     if tools
       params[:tools] = AIToolsRegistry.new(trip).definitions
+      # Use 'required' for route planning messages to ensure tools are used
       params[:tool_choice] = 'required'
       Rails.logger.info "Providing #{params[:tools].length} tools to AI with required tool choice"
     end

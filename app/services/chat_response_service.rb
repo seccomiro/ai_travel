@@ -7,8 +7,72 @@ class ChatResponseService
   end
 
   def call(user_message)
+    # Check if this is a route request before calling AI
+    if is_route_request?(user_message)
+      return handle_route_request(user_message)
+    end
+
+    # For non-route requests, proceed with normal AI chat
     service = OpenaiChatService.new
-    messages = @chat_session.conversation_for_ai
+    messages = build_messages_with_system_prompt
+    ai_result = service.chat(@trip, messages, tools: false)  # No tools for non-route requests
+
+    if ai_result && ai_result[:content].present?
+      assistant_message = create_assistant_message(ai_result[:content], {
+        usage: ai_result[:usage],
+        model: OpenaiChatService::DEFAULT_MODEL,
+      })
+      update_trip_from_conversation(user_message, assistant_message) if assistant_message.persisted?
+      return { message: assistant_message, trip: @trip }
+    else
+      assistant_message = create_fallback_message
+      update_trip_from_conversation(user_message, assistant_message) if assistant_message.persisted?
+      return { message: assistant_message, trip: @trip }
+    end
+  end
+
+  private
+
+  def handle_route_request(user_message)
+    Rails.logger.info "Handling route request for trip #{@trip.id}"
+
+    # Force route calculation without AI promises
+    route_result = force_route_tool_usage(user_message)
+
+    if route_result && route_result[:success]
+      # Update trip with the route result
+      trip_data = @trip.trip_data || {}
+      trip_data['current_route'] = route_result[:route]
+      trip_data['last_chat_update'] = Time.current.iso8601
+      @trip.update(trip_data: trip_data)
+
+      # Generate response based on actual results
+      response_content = generate_route_response(route_result, user_message)
+
+      assistant_message = create_assistant_message(response_content, {
+        usage: { total_tokens: 0 },
+        model: OpenaiChatService::DEFAULT_MODEL,
+        auto_calculated_route: true,
+        route_id: route_result[:route]['id']
+      })
+
+      update_trip_from_conversation(user_message, assistant_message) if assistant_message.persisted?
+      return { message: assistant_message, trip: @trip }
+    else
+      error_message = "I apologize, but I encountered an issue calculating your route. Please try again or provide more specific location details."
+      assistant_message = create_assistant_message(error_message, {
+        usage: { total_tokens: 0 },
+        model: OpenaiChatService::DEFAULT_MODEL,
+        route_calculation_error: true
+      })
+
+      return { message: assistant_message, trip: @trip }
+    end
+  end
+
+  def old_call_method(user_message)
+    service = OpenaiChatService.new
+    messages = build_messages_with_system_prompt
     ai_result = service.chat(@trip, messages)
     tool_call_made = false
 
@@ -118,6 +182,76 @@ class ChatResponseService
   end
 
   private
+
+  def build_messages_with_system_prompt
+    # Start with the system prompt
+    system_prompt = AIPrompts::TripPlanningSystemPrompt.generate(@trip.user)
+    messages = [{
+      role: 'system',
+      content: system_prompt
+    }]
+
+    # Add the conversation history
+    messages + @chat_session.conversation_for_ai
+  end
+
+  def generate_route_response(route_result, user_message)
+    route = route_result[:route]
+    summary = route_result[:summary] || route['summary']
+    segments = route_result[:segments] || route['segments']
+
+    # Handle both symbol and string keys in summary
+    total_distance = summary[:total_distance_km] || summary['total_distance_km'] || 0
+    total_duration = summary[:total_duration_hours] || summary['total_duration_hours'] || 0
+    avg_distance = summary[:average_distance_per_segment] || summary['average_distance_per_segment'] || 0
+    avg_duration = summary[:average_duration_per_segment] || summary['average_duration_per_segment'] || 0
+    invalid_segments = summary[:invalid_segments] || summary['invalid_segments'] || 0
+
+    response = []
+    response << "I've calculated your complete road trip itinerary with #{segments.length} segments."
+    response << ""
+    response << "**Route Summary:**"
+    response << "• Total distance: #{total_distance} km"
+    response << "• Total driving time: #{total_duration.round(1)} hours"
+    response << "• Average per segment: #{avg_distance} km, #{avg_duration.round(1)} hours"
+
+    if invalid_segments > 0
+      response << ""
+      response << "⚠️ **Note:** #{invalid_segments} segments exceed your 10h/800km constraints and have been automatically broken down into smaller parts."
+    end
+
+    response << ""
+    response << "**Detailed Route:**"
+
+    segments.each_with_index do |segment, index|
+      # Handle both symbol and string keys
+      is_valid = segment[:valid] || segment['valid']
+      origin = segment[:origin] || segment['origin']
+      destination = segment[:destination] || segment['destination']
+      distance = segment[:distance_km] || segment['distance_km'] || 0
+      duration = segment[:duration_hours] || segment['duration_hours'] || 0
+      issues = segment[:issues] || segment['issues']
+
+      status_icon = is_valid ? "✅" : "⚠️"
+      response << "#{index + 1}. #{status_icon} **#{origin}** → **#{destination}**"
+      response << "   Distance: #{distance} km | Duration: #{duration.round(1)} hours"
+
+      if issues&.any?
+        response << "   Issues: #{issues.join(', ')}"
+      end
+    end
+
+    if route_result[:warnings]&.any?
+      response << ""
+      response << "**Warnings:**"
+      route_result[:warnings].each { |warning| response << "• #{warning}" }
+    end
+
+    response << ""
+    response << "Your route respects your constraints: daytime driving only, max 10 hours or 800km per segment."
+
+    response.join("\n")
+  end
 
   def is_route_request?(user_message)
     message_content = user_message.is_a?(ChatMessage) ? user_message.content : user_message.to_s

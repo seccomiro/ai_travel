@@ -36,17 +36,13 @@ class RouteRequestDetectorService
     # First, try to extract explicit "from X to Y" patterns
     explicit_segments = extract_explicit_route_patterns(message)
 
-    # Try to extract destinations and build segments
-    build_segments = extract_destinations_and_build_segments(message)
-
-    # Choose the better result - prefer build_segments if it has more complete segments
-    segments = if build_segments.length > explicit_segments.length
-                 build_segments
-               elsif explicit_segments.any? && explicit_segments.all? { |seg| seg[:origin].present? && seg[:destination].present? }
-                 explicit_segments
-               else
-                 build_segments
-               end
+    # If explicit patterns found valid segments, use them
+    if explicit_segments.any? && explicit_segments.all? { |seg| seg[:origin].present? && seg[:destination].present? }
+      segments = explicit_segments
+    else
+      # Otherwise, try to extract destinations and build segments
+      segments = extract_destinations_and_build_segments(message)
+    end
 
     # If we found segments, update the trip with the extracted information
     if segments.any?
@@ -65,19 +61,49 @@ class RouteRequestDetectorService
   def extract_explicit_route_patterns(message)
     segments = []
 
+    # Pattern for "from X to Y, with a stop in Z" (more comprehensive)
+    from_to_with_stop_patterns = [
+      /from\s+([\w\sÀ-ÿ]+?)\s+to\s+([\w\sÀ-ÿ]+?),\s+with\s+a\s+stop\s+in\s+([\w\sÀ-ÿ]+?)(?:\.|,|\.|\s+I\s+|\s*$)/i,
+      /from\s+([\w\sÀ-ÿ]+?)\s+to\s+([\w\sÀ-ÿ]+?),\s+stopping\s+in\s+([\w\sÀ-ÿ]+?)(?:\.|,|\.|\s+I\s+|\s*$)/i,
+      /from\s+([\w\sÀ-ÿ]+?)\s+to\s+([\w\sÀ-ÿ]+?),\s+via\s+([\w\sÀ-ÿ]+?)(?:\.|,|\.|\s+I\s+|\s*$)/i,
+    ]
+
+    from_to_with_stop_patterns.each do |pattern|
+      if match = message.match(pattern)
+        origin = clean_location(match[1].strip)
+        destination = clean_location(match[2].strip)
+        stop = clean_location(match[3].strip)
+
+        if origin.present? && destination.present? && stop.present?
+          # Create two segments: origin -> stop, stop -> destination
+          segments << {
+            origin: origin,
+            destination: stop,
+            waypoints: [],
+          }
+          segments << {
+            origin: stop,
+            destination: destination,
+            waypoints: [],
+          }
+          return segments # Return early if we found this pattern
+        end
+      end
+    end
+
     # Pattern for "from X to Y" (both origin and destination)
     from_to_patterns = [
       /from\s+([^,\s]+(?:\s+[^,\s]+)*)\s+to\s+([^,\s]+(?:\s+[^,\s]+)*)/i,
       /driving\s+from\s+([^,\s]+(?:\s+[^,\s]+)*)\s+to\s+([^,\s]+(?:\s+[^,\s]+)*)/i,
       /route\s+from\s+([^,\s]+(?:\s+[^,\s]+)*)\s+to\s+([^,\s]+(?:\s+[^,\s]+)*)/i,
-      /how\s+to\s+get\s+from\s+([^,\s]+(?:\s+[^,\s]+)*)\s+to\s+([^,\s]+(?:\s+[^,\s]+)*)/i
+      /how\s+to\s+get\s+from\s+([^,\s]+(?:\s+[^,\s]+)*)\s+to\s+([^,\s]+(?:\s+[^,\s]+)*)/i,
     ]
 
     from_to_patterns.each do |pattern|
-      matches = message.scan(pattern)
-      matches.each do |match|
-        origin = clean_location(match[0])
-        destination = clean_location(match[1])
+      match = message.match(pattern) # Use match instead of scan to avoid duplicates
+      if match
+        origin = clean_location(match[1])
+        destination = clean_location(match[2])
 
         # Skip if either origin or destination contains date patterns
         next if origin&.match?(/\d+/) || destination&.match?(/\d+/)
@@ -89,8 +115,9 @@ class RouteRequestDetectorService
           segments << {
             origin: origin,
             destination: destination,
-            waypoints: []
+            waypoints: [],
           }
+          break # Exit after first match to avoid duplicates
         end
       end
     end
@@ -108,7 +135,7 @@ class RouteRequestDetectorService
         segments << {
           origin: origin,
           destination: nil, # Will be filled by destination extraction
-          waypoints: []
+          waypoints: [],
         }
       end
     end
@@ -137,7 +164,7 @@ class RouteRequestDetectorService
         segments << {
           origin: current_origin,
           destination: destination,
-          waypoints: []
+          waypoints: [],
         }
         current_origin = destination
       end
@@ -152,7 +179,7 @@ class RouteRequestDetectorService
         segments << {
           origin: locations[i],
           destination: locations[i + 1],
-          waypoints: []
+          waypoints: [],
         }
       end
       return segments
@@ -170,7 +197,7 @@ class RouteRequestDetectorService
           segments << {
             origin: origin,
             destination: dest,
-            waypoints: []
+            waypoints: [],
           }
         end
         return segments
@@ -204,23 +231,56 @@ class RouteRequestDetectorService
   # Extract dates from message text
   def extract_dates_from_message(message)
     dates = []
+    date_contexts = []
 
-    # Look for date patterns
-    date_patterns = [
-      # "December 26th, 2025" pattern
-      /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?,?\s+\d{4}\b/i,
-      # "January 18th to February 15th" pattern
-      /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\s+to\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\b/i,
-      # "from January 18th to February 15th" pattern
-      /from\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\s+to\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\b/i
+    # Look for date patterns with context
+    # Pattern for dates with location context
+    location_date_patterns = [
+      # "reservation in [Location] from [Date] to [Date]" - dynamic location pattern
+      /(reservation\s+in\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+from\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?)\s+to\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?))/i,
+      # "in Location from date to date" pattern
+      /in\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+from\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?)\s+to\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?)\b/i,
     ]
 
-    date_patterns.each do |pattern|
+    location_date_patterns.each do |pattern|
       matches = message.scan(pattern)
       matches.each do |match|
-        dates << match.strip
+        location = match[1]
+        start_date = match[2]
+        end_date = match[3]
+
+        date_contexts << {
+          type: 'reservation',
+          location: location,
+          start_date: start_date,
+          end_date: end_date,
+          full_text: match[0],
+        }
+
+        dates << "#{start_date} to #{end_date}"
       end
     end
+
+    # General date patterns
+    general_date_patterns = [
+      # "December 26th, 2025" pattern with optional year
+      /\b((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?(?:,?\s+\d{4})?)\b/i,
+      # "January 18th to February 15th" pattern
+      /\b((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\s+to\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?)\b/i,
+      # "from January 18th to February 15th" pattern
+      /(from\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?\s+to\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+(?:st|nd|rd|th)?)\b/i,
+    ]
+
+    general_date_patterns.each do |pattern|
+      matches = message.scan(pattern)
+      matches.each do |match|
+        date_str = match.is_a?(Array) ? match[0] : match
+        dates << date_str.strip
+      end
+    end
+
+    # Store contexts in instance variable for later use
+    @date_contexts = date_contexts
 
     dates.uniq
   end
@@ -291,7 +351,7 @@ class RouteRequestDetectorService
     # Look for "visit", "go to", "travel to" patterns
     visit_patterns = [
       /(?:visit|go to|travel to|see)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
-      /want to visit\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i
+      /want to visit\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
     ]
 
     visit_patterns.each do |pattern|
@@ -319,59 +379,84 @@ class RouteRequestDetectorService
   def extract_all_locations(message)
     locations = []
 
-    # Look for city names with country suffixes
-    city_country_pattern = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*),\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i
-    matches = message.scan(city_country_pattern)
-    matches.each do |match|
-      location = match.compact.join(', ')
-      cleaned_location = clean_location(location)
-      locations << cleaned_location if cleaned_location.present?
+    # First, look for locations in "want to visit X, Y, Z" patterns
+    visit_pattern = /want\s+to\s+visit\s+([^.]+?)(?:\.|(?:\s*We|\s*we)\s+|$)/i
+    if match = message.match(visit_pattern)
+      destinations_text = match[1]
+      # Split by commas and 'and' - be more careful about splitting
+      destination_parts = destinations_text.split(/,\s*(?:and\s+)?|\s+and\s+/)
+      destination_parts.each do |part|
+        cleaned = clean_location(part.strip)
+        if cleaned.present? && !cleaned.match?(/^(a|an|the|my|our|some|few|at|on|in|during|only)$/i)
+          locations << cleaned
+        end
+      end
     end
 
-    # Look for specific geographic features with proper cleaning
+    # Look for capitalized location patterns (dynamic - no hardcoded cities)
+    city_patterns = [
+      /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:City|Town|Village|Park|National\s+Park))?)\b/,
+    ]
+
+    city_patterns.each do |pattern|
+      matches = message.scan(pattern)
+      matches.each do |match|
+        location = match.is_a?(Array) ? match[0] : match
+        cleaned_location = clean_location(location)
+        locations << cleaned_location if cleaned_location.present?
+      end
+    end
+
+    # Look for geographic features (dynamic patterns)
     geographic_patterns = [
-      /\bTorres\s+del\s+Paine\b/i,
-      /\bMount\s+Fitz\s+Roy\b/i,
-      /\b(?:Mount|Monte)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i
+      /\b(Mount\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i,
+      /\b(Monte\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i,
+      /\b(Lake\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i,
+      /\b(Parque\s+Nacional\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/i,
+      /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:National\s+Park|Park|del\s+[A-Z][a-z]+))\b/i,
     ]
 
     geographic_patterns.each do |pattern|
       matches = message.scan(pattern)
       matches.each do |match|
-        if match.is_a?(Array)
-          location = match.compact.join(' ')
-        else
-          location = match
-        end
+        location = match.is_a?(Array) ? match[0] : match
         cleaned_location = clean_location(location)
         locations << cleaned_location if cleaned_location.present?
       end
     end
 
     # Remove duplicates and filter out common words and irrelevant phrases
-    common_words = %w[the and or but in on at to from with by for of a an we want visit plan trip]
+    common_words = %w[the and or but in on at to from with by for of a an we want visit plan trip my wife I]
     irrelevant_phrases = [
       'trip for me', 'departing from', 'my wife and',
       'want to visit', 'we are going to drive', 'only during daytime',
-      'do not plan segments that would last more than', 'stops counting',
-      'week', 'days', 'reservation'
+      'do not plan segments', 'stops counting',
+      'week', 'days', 'reservation', 'national parks', 'some days'
     ]
+    
+    # Filter out dates and time references (dynamic month detection)
+    date_words = %w[january february march april may june july august september october november december]
+    date_patterns = /\d+(?:st|nd|rd|th)?|\d{4}/
 
     locations = locations.reject do |loc|
-      common_words.include?(loc.downcase) ||
-      irrelevant_phrases.any? { |phrase| loc.downcase.include?(phrase.downcase) } ||
-      # Reject compound phrases that contain multiple locations
-      loc.include?(',') && loc.split(',').length > 2
+      normalized = loc.downcase.strip
+      common_words.include?(normalized) ||
+      date_words.include?(normalized) ||
+      irrelevant_phrases.any? { |phrase| normalized == phrase.downcase } ||
+      loc.match?(date_patterns) || # Reject dates and years dynamically
+      loc.length < 3 # Reject very short strings
     end
 
-    # Remove duplicates and sort by appearance in text
+    # Deduplicate while preserving order
+    seen = Set.new
     unique_locations = []
+
     locations.each do |loc|
-      # Skip if this location is already included in another location
-      next if unique_locations.any? { |existing| existing.downcase.include?(loc.downcase) || loc.downcase.include?(existing.downcase) }
-      # Skip if this location is a subset of another location
-      next if unique_locations.any? { |existing| existing.downcase != loc.downcase && (existing.downcase.include?(loc.downcase) || loc.downcase.include?(existing.downcase)) }
-      unique_locations << loc
+      normalized = loc.downcase.strip
+      unless seen.include?(normalized)
+        seen.add(normalized)
+        unique_locations << loc
+      end
     end
 
     unique_locations
@@ -417,21 +502,60 @@ class RouteRequestDetectorService
   def extract_preferences_from_message(message)
     preferences = {}
 
-    # Extract driving time preferences
-    if message.match?(/max.*(\d+)\s*h/i)
-      preferences[:max_daily_drive_h] = message.match(/max.*(\d+)\s*h/i)[1].to_i
+    # Extract driving time preferences - handle various patterns
+    time_patterns = [
+      /no\s+more\s+than\s+(\d+)\s*h(?:ours?)?/i,
+      /(?:not|don't|do not).*(?:more than|exceed|over|greater than).*?(\d+)\s*h(?:ours?)?/i,
+      /(?:max|maximum|up to|less than|under).*?(\d+)\s*h(?:ours?)?/i,
+      /(\d+)\s*h(?:ours?)?.*?(?:max|maximum|limit)/i,
+      /segments.*(?:last|take|be).*(?:more than|over).*?(\d+)\s*h(?:ours?)?/i,
+    ]
+
+    time_patterns.each do |pattern|
+      if match = message.match(pattern)
+        preferences[:max_daily_drive_h] = match[1].to_i
+        break
+      end
     end
 
-    # Extract distance preferences
-    if message.match?(/max.*(\d+)\s*km/i)
-      preferences[:max_daily_distance_km] = message.match(/max.*(\d+)\s*km/i)[1].to_i
+    # Extract distance preferences - handle various patterns
+    distance_patterns = [
+      /(?:not|don't|do not).*(?:more than|exceed|over|greater than).*?(\d+)\s*km/i,
+      /(?:max|maximum|up to|less than|under).*?(\d+)\s*km/i,
+      /(\d+)\s*km.*?(?:max|maximum|limit)/i,
+      /segments.*(?:last|be|cover).*(?:more than|over).*?(\d+)\s*km/i,
+    ]
+
+    distance_patterns.each do |pattern|
+      if match = message.match(pattern)
+        preferences[:max_daily_distance_km] = match[1].to_i
+        break
+      end
     end
 
     # Extract driving preferences
-    if message.match?(/daytime/i)
+    if message.match?(/(?:only\s+)?(?:during\s+)?daytime/i) || message.match?(/daytime\s+only/i)
       preferences[:daytime_only] = true
     end
 
+    # Extract avoid preferences
+    avoid_items = []
+    if message.match?(/avoid.*tolls/i) || message.match?(/no.*tolls/i)
+      avoid_items << 'tolls'
+    end
+    if message.match?(/avoid.*highways/i) || message.match?(/no.*highways/i)
+      avoid_items << 'highways'
+    end
+    if message.match?(/avoid.*ferries/i) || message.match?(/no.*ferries/i)
+      avoid_items << 'ferries'
+    end
+    if message.match?(/avoid.*dirt\s*roads/i) || message.match?(/no.*dirt\s*roads/i)
+      avoid_items << 'unpaved'
+    end
+
+    preferences[:avoid] = avoid_items if avoid_items.any?
+
+    Rails.logger.info "Extracted preferences: #{preferences}"
     preferences
   end
 
@@ -445,7 +569,7 @@ class RouteRequestDetectorService
         {
           origin: segment['origin'],
           destination: segment['destination'],
-          waypoints: segment['waypoints'] || []
+          waypoints: segment['waypoints'] || [],
         }
       end
     end
@@ -459,7 +583,7 @@ class RouteRequestDetectorService
         segments << {
           origin: destinations[i],
           destination: destinations[i + 1],
-          waypoints: []
+          waypoints: [],
         }
       end
       return segments
@@ -492,7 +616,7 @@ class RouteRequestDetectorService
     {
       max_daily_drive_h: trip_data.dig('route_preferences', 'max_daily_drive_h'),
       max_daily_distance_km: trip_data.dig('route_preferences', 'max_daily_distance_km'),
-      avoid: trip_data.dig('route_preferences', 'avoid') || []
+      avoid: trip_data.dig('route_preferences', 'avoid') || [],
     }
   end
 
@@ -501,11 +625,10 @@ class RouteRequestDetectorService
   def clean_location(location)
     return nil if location.blank?
 
-    # Basic cleaning - remove extra whitespace and capitalize
-    cleaned = location.strip.titleize
+    # Basic cleaning - remove extra whitespace
+    cleaned = location.strip
 
-    # Return the cleaned location without hardcoded mappings
-    # Let the user's original location names be used as-is
-    cleaned
+    # Return cleaned and titleized version - let Google Maps handle the geocoding
+    cleaned.titleize
   end
 end

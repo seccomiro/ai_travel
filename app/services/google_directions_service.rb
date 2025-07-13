@@ -105,11 +105,11 @@ class GoogleDirectionsService
 
     issues = []
 
-    if drive_hours > max_daily_drive_h
+    if max_daily_drive_h && drive_hours > max_daily_drive_h
       issues << "Drive time (#{drive_hours}h) exceeds maximum daily drive time (#{max_daily_drive_h}h)"
     end
 
-    if distance_km > max_daily_distance_km
+    if max_daily_distance_km && distance_km > max_daily_distance_km
       issues << "Distance (#{distance_km}km) exceeds maximum daily distance (#{max_daily_distance_km}km)"
     end
 
@@ -133,7 +133,9 @@ class GoogleDirectionsService
     total_distance = leg[:distance_km]
 
     # Calculate how many days needed
-    days_needed = [total_hours / max_daily_drive_h, total_distance / max_daily_distance_km].max.ceil
+    days_by_time = max_daily_drive_h ? (total_hours / max_daily_drive_h).ceil : 1
+    days_by_distance = max_daily_distance_km ? (total_distance / max_daily_distance_km).ceil : 1
+    days_needed = [days_by_time, days_by_distance].max
 
     if days_needed <= 1
       return []
